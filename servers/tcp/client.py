@@ -18,7 +18,9 @@ class Client(object):
         print 'connected'
 
     def on_disconnect(self):
+        print 'disconnected'
         self.stream = None
+        self.redis = None
 
     def send(self, message):
         try:
