@@ -9,7 +9,7 @@ import tornadoredis
 def new_redis(callback=None):
     while True:
         try:
-            logging.info('Connecting to redis')
+            logging.info('Establishing redis connection')
             redis = tornadoredis.Client()
             redis.connect()
             callback(redis)
@@ -36,8 +36,8 @@ class RedisSub(object):
         if message is None:
             self.reconnect()
         elif message.kind == 'message':
-            print '<-', message.body
             self.handler(message.body)
+            print '<-', repr(message.body)
 
 
 class RedisMQ(object):
@@ -57,7 +57,7 @@ class RedisMQ(object):
     def send(self, message):
         try:
             self.redis.rpush(self.name, message)
-            print '->', message
+            print '->', repr(message)
         except:
             self.queue.append(message)
             if self.redis is not None:

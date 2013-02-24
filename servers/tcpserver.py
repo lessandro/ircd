@@ -16,12 +16,19 @@ class TCPServer(tornado.netutil.TCPServer):
         self.listen(config.tcp_port)
 
     def handle_stream(self, stream, address):
-        tag = '%s-%d' % (address[0], address[1])
-        on_data = functools.partial(self.user_data, tag)
+        tag = self.server.make_tag(address[0], address[1])
+        on_data = functools.partial(self.handle_data, tag)
         stream.read_until_close(on_data, on_data)
-        self.server.user_connect(tag, address[0])
 
-    def user_data(self, tag, data):
+        def handler(data):
+            if data:
+                stream.write(data)
+            else:
+                stream.close()
+
+        self.server.user_connect(tag, address[0], handler)
+
+    def handle_data(self, tag, data):
         if not data:
             self.server.user_disconnect(tag)
             return

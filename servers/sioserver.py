@@ -10,8 +10,15 @@ class Connection(tornadio2.conn.SocketConnection):
         self.server = server
 
     def on_open(self, info):
-        self.tag = '%s-%x' % (info.ip, id(self))
-        self.server.user_connect(self.tag, info.ip)
+        self.tag = self.server.make_tag(info.ip, id(self))
+
+        def handler(data):
+            if data:
+                self.send(data)
+            else:
+                self.close()
+
+        self.server.user_connect(self.tag, info.ip, handler)
 
     def on_message(self, message):
         self.server.user_message(self.tag, message)
