@@ -14,14 +14,14 @@ class Connection(tornadio2.conn.SocketConnection):
 
         def handler(data):
             if data:
-                self.send(data)
+                self.send(data.decode('utf-8'))
             else:
                 self.close()
 
         self.server.user_connect(self.tag, info.ip, handler)
 
     def on_message(self, message):
-        self.server.user_message(self.tag, message)
+        self.server.user_message(self.tag, message.encode('utf-8'))
 
     def on_close(self):
         self.server.user_disconnect(self.tag)

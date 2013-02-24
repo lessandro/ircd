@@ -10,7 +10,7 @@ function send(data) {
 
 s.on('connect', function() {
     console.log('connected');
-    send('hello');
+    send('おはよう');
 });
 
 s.on('message', function(data) {
