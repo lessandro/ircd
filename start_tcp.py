@@ -1,10 +1,11 @@
+#!/usr/bin/env python
+
 import logging
 import tornado.ioloop
-from servers.tcp.server import Server
+from servers.tcpserver import TCPServer
 import config
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.DEBUG)
-    io_loop = tornado.ioloop.IOLoop.instance()
-    server = Server(io_loop, config)
-    io_loop.start()
+    server = TCPServer(config)
+    tornado.ioloop.IOLoop.instance().start()

@@ -8,4 +8,4 @@ def start(config):
     while True:
         _, message = r.blpop('input')
         print message
-        r.publish('output', 'hello ' + message)
+        r.publish('output', 'msg ' + message)
