@@ -1,26 +1,53 @@
+import logging
+import command
 import redis
 
 
-def start(config):
-    r = redis.StrictRedis()
-    print 'kernel initialized'
+class Kernel(object):
+    def __init__(self, config):
+        self.name = config.server_name
+        self.users = {}
+        self.chans = {}
 
-    def send(message):
-        r.publish('output', message + '\r\n')
+        command.load_commands()
+        self.redis = redis.StrictRedis()
 
-    while True:
-        _, message = r.blpop('input')
-        print repr(message)
+    def loop(self):
+        logging.info('IRCd started')
 
-        command, origin, data = message.split(' ', 2)
+        while True:
+            _, message = self.redis.blpop('input')
 
-        if command == 'connect':
-            send('%s hello %s' % (origin, data))
+            kind, origin, data = message.split(' ', 2)
 
-        if command == 'message':
-            send('%s you sent %d chars: %s' % (origin, len(data), data))
-            if data == 'quit':
-                r.publish('output', '%s ' % origin)
+            if kind == 'message':
+                self.user_message(origin, data)
 
-        if command == 'disconnect':
-            send('%s goodbye' % origin)
+            elif kind == 'connect':
+                self.user_connect(origin, data)
+
+            elif kind == 'disconnect':
+                self.user_disconnect(origin, data)
+
+            elif kind == 'reset':
+                self.server_reset(origin)
+
+    def user_message(self, user, message):
+        logging.debug('message %s %s', user, message)
+
+        command.dispatch(self, user, message)
+
+    def user_connect(self, user, address):
+        logging.debug('connect %s %s', user, address)
+
+    def user_disconnect(self, user, reason):
+        logging.debug('disconnect %s %s', user, reason)
+
+    def server_reset(self, prefix):
+        logging.debug('reset %s', prefix)
+
+    def send(self, user, message):
+        self.redis.publish('output', '%s %s\r\n' % (user, message))
+
+    def disconnect(self, user):
+        self.redis.publish('output', '%s ' % user)

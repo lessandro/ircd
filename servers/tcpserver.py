@@ -29,9 +29,7 @@ class TCPServer(tornado.netutil.TCPServer):
         self.server.user_connect(tag, address[0], handler)
 
     def handle_data(self, tag, data):
-        if not data:
+        if data:
+            self.server.user_message(tag, data)
+        else:
             self.server.user_disconnect(tag)
-            return
-
-        # TODO: buffer, split lines
-        self.server.user_message(tag, data.strip())
