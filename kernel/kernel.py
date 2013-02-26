@@ -1,3 +1,4 @@
+import cPickle
 import logging
 import command
 import redis
@@ -6,8 +7,6 @@ import redis
 class Kernel(object):
     def __init__(self, config):
         self.name = config.server_name
-        self.users = {}
-        self.chans = {}
 
         command.load_commands()
         self.redis = redis.StrictRedis()
@@ -32,22 +31,59 @@ class Kernel(object):
             elif kind == 'reset':
                 self.server_reset(origin)
 
-    def user_message(self, user, message):
-        logging.debug('message %s %s', user, message)
+    def user_message(self, tag, message):
+        logging.debug('message %s %s', tag, message)
 
-        command.dispatch(self, user, message)
+        user = self.load_user(tag)
+        if not user:
+            logging.error('user %s not found' % tag)
+            return
 
-    def user_connect(self, user, address):
-        logging.debug('connect %s %s', user, address)
+        try:
+            decoded = message.decode('utf-8')
+        except:
+            self.send_raw(user, '999', 'Non-utf8 data')
+            return
 
-    def user_disconnect(self, user, reason):
-        logging.debug('disconnect %s %s', user, reason)
+        command.dispatch(self, user, decoded)
+
+    def user_connect(self, tag, address):
+        logging.debug('connect %s %s', tag, address)
+
+        user = {
+            'ip': address,
+            'tag': tag,
+            'nick': '*'
+        }
+        self.save_user(user)
+
+    def user_disconnect(self, tag, reason):
+        logging.debug('disconnect %s %s', tag, reason)
+
+        self.redis.delete(tag)
 
     def server_reset(self, prefix):
         logging.debug('reset %s', prefix)
 
-    def send(self, user, message):
-        self.redis.publish('output', '%s %s\r\n' % (user, message))
+    def send_raw(self, target, raw, args):
+        self.send(target, ':%s %s %s %s' %
+            (self.name, raw, target['nick'], args))
+
+    def send(self, targets, message):
+        if type(targets) is set:
+            tags = ','.join(target['tag'] for target in targets)
+        else:
+            tags = targets['tag']
+
+        self.redis.publish('output', '%s %s\r\n' % (tags, message))
 
     def disconnect(self, user):
-        self.redis.publish('output', '%s ' % user)
+        self.redis.publish('output', '%s ' % user['tag'])
+
+    def load_user(self, tag):
+        serialized = self.redis.get(tag)
+        return serialized and cPickle.loads(serialized)
+
+    def save_user(self, user):
+        serialized = cPickle.dumps(user)
+        self.redis.set(user['tag'], serialized)
