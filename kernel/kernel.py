@@ -1,4 +1,4 @@
-import cPickle
+import simplejson as json
 import logging
 import command
 import redis
@@ -82,8 +82,8 @@ class Kernel(object):
 
     def load_user(self, tag):
         serialized = self.redis.get(tag)
-        return serialized and cPickle.loads(serialized)
+        return serialized and json.loads(serialized)
 
     def save_user(self, user):
-        serialized = cPickle.dumps(user)
+        serialized = json.dumps(user)
         self.redis.set(user['tag'], serialized)
