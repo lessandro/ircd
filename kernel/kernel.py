@@ -57,13 +57,23 @@ class Kernel(object):
         }
         self.save_user(user)
 
+        prefix = tag.split('-', 1)[0]
+        self.redis.sadd(prefix, tag)
+
     def user_disconnect(self, tag, reason):
         logging.debug('disconnect %s %s', tag, reason)
 
         self.redis.delete(tag)
 
+        prefix = tag.split('-', 1)[0]
+        self.redis.srem(prefix, tag)
+
     def server_reset(self, prefix):
         logging.debug('reset %s', prefix)
+
+        tags = self.redis.smembers(prefix)
+        for tag in tags:
+            self.user_disconnect(tag, 'server reset')
 
     def send_raw(self, target, raw, args):
         self.send(target, ':%s %s %s %s' %
