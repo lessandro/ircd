@@ -41,12 +41,12 @@ class Kernel(object):
             return
 
         try:
-            decoded = message.decode('utf-8')
+            message.decode('utf-8')
         except:
             self.send_raw(user, '999', 'Non-utf8 data')
             return
 
-        command.dispatch(self, user, decoded)
+        command.dispatch(self, user, message)
 
     def user_connect(self, tag, address):
         logging.debug('connect %s %s', tag, address)
