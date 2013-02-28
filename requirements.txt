@@ -1,0 +1,6 @@
+TornadIO2
+redis
+simplejson
+tornado
+git+https://github.com/lessandro/tornado-redis.git
+
