@@ -31,6 +31,7 @@ class SioServer(object):
     @tornado.gen.engine
     def __init__(self, config):
         self.server = Server('sio')
+        yield tornado.gen.Task(self.server.connect)
 
         conn_maker = functools.partial(Connection, self.server)
         router = tornadio2.TornadioRouter(conn_maker)

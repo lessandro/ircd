@@ -1,15 +1,23 @@
+import tornado
 import redisutil
 
 
 class Server(object):
+
     def __init__(self, name):
         self.name = name
         self.users = {}
-        self.sub = redisutil.RedisSub('output', self.server_message)
-        self.mq = redisutil.RedisMQ('input')
-
-        self.mq.send('reset %s ' % name)
         self.buffers = {}
+        self.mq = redisutil.RedisMQ('mq-kernel')
+        self.mq_in = redisutil.RedisMQ('mq-' + self.name)
+
+    @tornado.gen.engine
+    def connect(self, callback=None):
+        yield tornado.gen.Task(self.mq.connect)
+        yield tornado.gen.Task(self.mq_in.connect)
+        self.mq_in.loop(self.server_message)
+        self.mq.send('reset %s ' % self.name)
+        callback()
 
     def make_tag(self, address, port):
         return '%s-%s-%s' % (self.name, address, port)

@@ -1,3 +1,4 @@
+import collections
 import simplejson as json
 import logging
 import command
@@ -15,7 +16,7 @@ class Kernel(object):
         logging.info('IRCd started')
 
         while True:
-            _, message = self.redis.blpop('input')
+            _, message = self.redis.blpop('mq-kernel')
 
             kind, origin, data = message.split(' ', 2)
 
@@ -57,7 +58,7 @@ class Kernel(object):
         }
         self.save_user(user)
 
-        prefix = tag.split('-', 1)[0]
+        prefix = tag[:3]
         self.redis.sadd(prefix, tag)
 
     def user_disconnect(self, tag, reason):
@@ -65,7 +66,7 @@ class Kernel(object):
 
         self.redis.delete(tag)
 
-        prefix = tag.split('-', 1)[0]
+        prefix = tag[:3]
         self.redis.srem(prefix, tag)
 
     def server_reset(self, prefix):
@@ -76,19 +77,26 @@ class Kernel(object):
             self.user_disconnect(tag, 'server reset')
 
     def send_raw(self, target, raw, args):
-        self.send(target, ':%s %s %s %s' %
+        self.send(target['tag'], ':%s %s %s %s' %
             (self.name, raw, target['nick'], args))
 
-    def send(self, targets, message):
-        if type(targets) is set:
-            tags = ','.join(target['tag'] for target in targets)
-        else:
-            tags = targets['tag']
+    def send(self, tags, message):
+        if type(tags) is str:
+            prefix = tags[:3]
+            self.redis.rpush('mq-' + prefix, '%s %s\r\n' % (tags, message))
+            return
 
-        self.redis.publish('output', '%s %s\r\n' % (tags, message))
+        prefixes = collections.defaultdict(list)
+        for tag in tags:
+            prefixes[tag[:3]].append(tag)
+
+        for prefix, tags in prefixes.iteritems():
+            tags = ','.join(tags)
+            self.redis.rpush('mq-' + prefix, '%s %s\r\n' % (tags, message))
 
     def disconnect(self, user):
-        self.redis.publish('output', '%s ' % user['tag'])
+        tag = user['tag']
+        self.redis.rpush('mq-' + tag[:3], '%s ' % tag)
 
     def load_user(self, tag):
         serialized = self.redis.get(tag)
