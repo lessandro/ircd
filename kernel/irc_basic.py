@@ -52,13 +52,3 @@ def cmd_ping(server, user, args):
 def cmd_quit(server, user, message):
     print 'QUIT', message
     server.disconnect(user)
-
-
-@command
-def cmd_join(server, user, chan):
-    print 'JOIN', chan
-
-
-@command
-def cmd_part(server, user, chan):
-    print 'PART', chan
