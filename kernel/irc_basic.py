@@ -50,5 +50,4 @@ def cmd_ping(server, user, args):
 
 @command
 def cmd_quit(server, user, message):
-    print 'QUIT', message
     server.disconnect(user)
