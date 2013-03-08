@@ -59,26 +59,40 @@ class Kernel(object):
         self.save_user(user)
 
         prefix = tag[:3]
-        self.redis.sadd(prefix, tag)
+        self.redis.sadd('server-' + prefix, tag)
 
     def user_disconnect(self, tag, reason):
         logging.debug('disconnect %s %s', tag, reason)
 
-        self.redis.delete(tag)
+        user = self.load_user(tag)
+        if not user:
+            logging.error('user %s not found' % tag)
+            return
+
+        chans = self.user_chans(user)
+        for chan_name in chans:
+            command.dispatch(self, user, 'PART %s' % chan_name)
+
+        self.redis.delete('user-' + tag)
 
         prefix = tag[:3]
-        self.redis.srem(prefix, tag)
+        self.redis.srem('server-' + prefix, tag)
 
     def server_reset(self, prefix):
         logging.debug('reset %s', prefix)
 
-        tags = self.redis.smembers(prefix)
+        tags = self.redis.smembers('server-' + prefix)
         for tag in tags:
             self.user_disconnect(tag, 'server reset')
 
+    def send_chan(self, user, chan, command, args=''):
+        tags = self.redis.smembers('chan-users-' + chan['name'])
+        self.send(tags, ':%s %s %s %s' % (
+            user['id'], command, chan['name'], args))
+
     def send_raw(self, target, raw, args):
-        self.send(target['tag'], ':%s %s %s %s' %
-            (self.name, raw, target['nick'], args))
+        self.send(target['tag'], ':%s %s %s %s' % (
+            self.name, raw, target['nick'], args))
 
     def send(self, tags, message):
         if type(tags) is str:
@@ -99,9 +113,50 @@ class Kernel(object):
         self.redis.rpush('mq-' + tag[:3], '%s ' % tag)
 
     def load_user(self, tag):
-        serialized = self.redis.get(tag)
+        serialized = self.redis.get('user-' + tag)
         return serialized and json.loads(serialized)
 
     def save_user(self, user):
         serialized = json.dumps(user)
-        self.redis.set(user['tag'], serialized)
+        self.redis.set('user-' + user['tag'], serialized)
+
+    def find_or_create_chan(self, chan_name):
+        chan = self.find_chan(chan_name)
+        if chan:
+            return chan
+
+        chan = {
+            'name': chan_name
+        }
+        self.save_chan(chan)
+        return chan
+
+    def find_chan(self, chan_name):
+        chan = self.redis.get('chan-' + chan_name)
+        return chan and json.loads(chan)
+
+    def save_chan(self, chan):
+        serialized = json.dumps(chan)
+        chan = self.redis.set('chan-' + chan['name'], serialized)
+
+    def join_chan(self, user, chan):
+        self.redis.sadd('chan-users-' + chan['name'], user['tag'])
+        self.redis.sadd('chan-nicks-' + chan['name'], user['nick'])
+        self.redis.sadd('user-chans-' + user['tag'], chan['name'])
+
+    def part_chan(self, user, chan):
+        self.redis.srem('chan-users-' + chan['name'], user['tag'])
+        self.redis.srem('chan-nicks-' + chan['name'], user['nick'])
+        self.redis.srem('user-chans-' + user['tag'], chan['name'])
+
+    def user_in_chan(self, user, chan):
+        return self.redis.sismember('chan-nicks-' + chan['name'], user['nick'])
+
+    def user_chans(self, user):
+        return self.redis.smembers('user-chans-' + user['tag'])
+
+    def chan_count(self, chan):
+        return self.redis.scard('chan-nicks-' + chan['name'])
+
+    def destroy_chan(self, chan):
+        self.redis.delete('chan-' + chan['name'])
