@@ -3,6 +3,7 @@ from command import command
 
 nick_re = re.compile(ur'^\w{3,}$', re.UNICODE)
 user_re = re.compile(r'^[a-zA-Z0-9_~]{1,}$')
+max_user_len = 10
 
 
 @command
@@ -24,7 +25,7 @@ def cmd_nick(server, user, nick):
 
 @command
 def cmd_user(server, user, username, hostname, servername, realname):
-    username = username[:10]
+    username = username[:max_user_len]
 
     if not user_re.match(username):
         server.send_raw(user, '999', ':Invalid username')
