@@ -11,6 +11,9 @@ class Server(object):
         self.mq = redisutil.RedisMQ('mq-kernel')
         self.mq_in = redisutil.RedisMQ('mq-' + self.name)
 
+    def stop(self):
+        self.mq.send('reset %s ' % self.name)
+
     @tornado.gen.engine
     def connect(self, callback=None):
         yield tornado.gen.Task(self.mq.connect)

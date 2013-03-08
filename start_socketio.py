@@ -8,4 +8,7 @@ import config
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)
     server = SioServer(config)
-    tornado.ioloop.IOLoop.instance().start()
+    try:
+        tornado.ioloop.IOLoop.instance().start()
+    except KeyboardInterrupt:
+        server.stop()

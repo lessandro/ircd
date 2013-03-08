@@ -16,6 +16,9 @@ class TCPServer(tornado.netutil.TCPServer):
         logging.info('Starting IRCd server on port \'%d\'', config.tcp_port)
         self.listen(config.tcp_port)
 
+    def stop(self):
+        self.server.stop()
+
     def handle_stream(self, stream, address):
         tag = self.server.make_tag(address[0], address[1])
         on_data = functools.partial(self.handle_data, tag)

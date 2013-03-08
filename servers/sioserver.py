@@ -43,3 +43,6 @@ class SioServer(object):
             socket_io_port=config.socketio_port)
 
         tornadio2.SocketServer(app, auto_start=False)
+
+    def stop(self):
+        self.server.stop()
