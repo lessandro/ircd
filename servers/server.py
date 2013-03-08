@@ -8,8 +8,8 @@ class Server(object):
         self.name = name
         self.users = {}
         self.buffers = {}
-        self.mq = redisutil.RedisMQ('mq-kernel')
-        self.mq_in = redisutil.RedisMQ('mq-' + self.name)
+        self.mq = redisutil.RedisMQ('mq:kernel')
+        self.mq_in = redisutil.RedisMQ('mq:' + self.name)
 
     def stop(self):
         self.mq.send('reset %s ' % self.name)
@@ -23,7 +23,8 @@ class Server(object):
         callback()
 
     def make_tag(self, address, port):
-        return '%s-%s-%s' % (self.name, address, port)
+        address = address.replace(':', '_')
+        return '%s:%s-%s' % (self.name, address, port)
 
     def server_message(self, message):
         targets, message = message.split(' ', 1)
