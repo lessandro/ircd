@@ -90,6 +90,12 @@ class Kernel(object):
         self.send(tags, ':%s %s %s %s' % (
             user['id'], command, chan['name'], args))
 
+    def send_chan_others(self, user, chan, command, args=''):
+        tags = self.redis.smembers('chan-users:' + chan['name'])
+        tags.remove(user['tag'])
+        self.send(tags, ':%s %s %s %s' % (
+            user['id'], command, chan['name'], args))
+
     def send_raw(self, target, raw, args):
         self.send(target['tag'], ':%s %s %s %s' % (
             self.name, raw, target['nick'], args))

@@ -10,7 +10,9 @@ function send(data) {
 
 s.on('connect', function() {
     console.log('connected');
-    send('おはよう');
+    send('NICK おはよう');
+    send('USER user');
+    send('JOIN #asd');
 });
 
 s.on('message', function(data) {
@@ -23,7 +25,7 @@ s.on('disconnect', function() {
 
 var i = 0;
 var x = setInterval(function() {
-    send("u craz " + i);
+    send("PRIVMSG #asd :hello " + i);
     if (i++ == 4) {
         s.disconnect();
         clearInterval(x);
