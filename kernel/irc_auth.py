@@ -2,7 +2,8 @@ import re
 from command import command
 
 nick_re = re.compile(ur'^\w{3,}$', re.UNICODE)
-user_re = re.compile(r'^[a-zA-Z0-9_~]{1,}$')
+user_re = re.compile(r'^[a-zA-Z0-9_~]+$')
+max_nick_len = 10  # unicode chars
 max_user_len = 10
 
 
@@ -12,7 +13,7 @@ def cmd_nick(server, user, nick):
         server.send_raw(user, '999', ':You may not change your nick')
         return
 
-    nick_utf8 = nick.decode('utf-8')
+    nick_utf8 = nick.decode('utf-8')[:max_nick_len]
 
     if not nick_re.match(nick_utf8):
         server.send_raw(user, '999', ':Invalid nick')
@@ -50,6 +51,6 @@ def check_auth(server, user):
         return
 
     user['auth'] = True
-    user['id'] = '%s!%s@%s' % (user['username'], user['nick'], user['ip'])
+    user['id'] = '%s!%s@%s' % (user['nick'], user['username'], user['ip'])
     server.save_user(user)
     server.send_raw(user, '001', ':Welcome')
