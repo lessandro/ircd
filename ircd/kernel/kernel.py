@@ -1,5 +1,5 @@
 import collections
-import simplejson as json
+import ujson as json
 import logging
 import command
 import redis

@@ -36,4 +36,4 @@ def load_commands():
     modules = glob.glob(os.path.dirname(__file__) + "/irc_*.py")
     for fullpath in modules:
         name = os.path.basename(fullpath)[:-3]
-        importlib.import_module('kernel.' + name)
+        importlib.import_module('ircd.kernel.' + name)
