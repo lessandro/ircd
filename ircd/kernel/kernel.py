@@ -113,7 +113,7 @@ class Kernel(object):
             self.name, raw, target['nick'], args))
 
     def send(self, tags, message):
-        if type(tags) is str:
+        if type(tags) in [str, unicode]:
             prefix = _prefix(tags)
             self.redis.rpush('mq:' + prefix, '%s %s\r\n' % (tags, message))
             return
