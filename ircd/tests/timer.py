@@ -12,4 +12,3 @@ class Timer(object):
         return self.__finish - self.__start
 
 timer = Timer()
-
