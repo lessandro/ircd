@@ -30,7 +30,7 @@ class Connection(tornadio2.conn.SocketConnection):
 class SioServer(object):
     @tornado.gen.engine
     def __init__(self, config):
-        self.server = Server('sio')
+        self.server = Server('sio', config)
         yield tornado.gen.Task(self.server.connect)
 
         conn_maker = functools.partial(Connection, self.server)

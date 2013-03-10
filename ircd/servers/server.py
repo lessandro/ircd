@@ -4,12 +4,12 @@ import redisutil
 
 class Server(object):
 
-    def __init__(self, name):
+    def __init__(self, name, config):
         self.name = name
         self.users = {}
         self.buffers = {}
-        self.mq = redisutil.RedisMQ('mq:kernel')
-        self.mq_in = redisutil.RedisMQ('mq:' + self.name)
+        self.mq = redisutil.RedisMQ('mq:kernel', config.redis_db)
+        self.mq_in = redisutil.RedisMQ('mq:' + self.name, config.redis_db)
 
     def stop(self):
         self.mq.send('reset %s ' % self.name)

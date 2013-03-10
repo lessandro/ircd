@@ -6,11 +6,11 @@ import tornadoredis
 
 
 @tornado.gen.engine
-def new_redis(callback=None):
+def new_redis(db, callback=None):
     while True:
         try:
             logging.info('Establishing redis connection')
-            redis = tornadoredis.Client()
+            redis = tornadoredis.Client(selected_db=db)
             redis.connect()
             callback(redis)
             break
@@ -20,14 +20,15 @@ def new_redis(callback=None):
 
 
 class RedisMQ(object):
-    def __init__(self, name):
+    def __init__(self, name, db):
         self.name = name
+        self.db = db
         self.queue = collections.deque()
 
     @tornado.gen.engine
     def connect(self, callback=None):
         self.redis = None
-        self.redis = yield tornado.gen.Task(new_redis)
+        self.redis = yield tornado.gen.Task(new_redis, self.db)
         while self.queue:
             message = self.queue.popleft()
             self.send(message)

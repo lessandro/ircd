@@ -10,7 +10,7 @@ class TCPServer(tornado.netutil.TCPServer):
     def __init__(self, config):
         super(TCPServer, self).__init__()
 
-        self.server = Server('tcp')
+        self.server = Server('tcp', config)
         yield tornado.gen.Task(self.server.connect)
 
         logging.info('Starting IRCd server on port \'%d\'', config.tcp_port)

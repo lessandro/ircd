@@ -15,7 +15,7 @@ class Kernel(object):
         self.name = config.server_name
 
         command.load_commands()
-        self.redis = redis.StrictRedis()
+        self.redis = redis.StrictRedis(db=config.redis_db)
 
     def loop(self):
         logging.info('IRCd started')

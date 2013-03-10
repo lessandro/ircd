@@ -16,3 +16,7 @@ socketio_port = 8001
 
 flash_policy_port = 10843
 flash_policy_file = os.path.join(config_path, 'policy.xml')
+
+# redis
+
+redis_db = 0
