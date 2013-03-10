@@ -6,6 +6,10 @@ import redis
 import replies
 
 
+def _prefix(tag):
+    return tag.split(':', 1)[0]
+
+
 class Kernel(object):
     def __init__(self, config):
         self.name = config.server_name
@@ -61,7 +65,7 @@ class Kernel(object):
         }
         self.save_user(user)
 
-        prefix = tag.split(':', 1)[0]
+        prefix = _prefix(tag)
         self.redis.sadd('server-users:' + prefix, tag)
 
     def user_disconnect(self, tag, reason):
@@ -78,7 +82,7 @@ class Kernel(object):
 
         self.redis.delete('user:' + tag)
 
-        prefix = tag[:3]
+        prefix = _prefix(tag)
         self.redis.srem('server-users:' + prefix, tag)
 
     def server_reset(self, prefix):
@@ -110,13 +114,13 @@ class Kernel(object):
 
     def send(self, tags, message):
         if type(tags) is str:
-            prefix = tags.split(':', 1)[0]
+            prefix = _prefix(tags)
             self.redis.rpush('mq:' + prefix, '%s %s\r\n' % (tags, message))
             return
 
         prefixes = collections.defaultdict(list)
         for tag in tags:
-            prefixes[tag.split(':', 1)[0]].append(tag)
+            prefixes[_prefix(tag)].append(tag)
 
         for prefix, tags in prefixes.iteritems():
             tags = ','.join(tags)
@@ -124,7 +128,7 @@ class Kernel(object):
 
     def disconnect(self, user):
         tag = user['tag']
-        self.redis.rpush('mq:' + tag.split(':', 1)[0], '%s ' % tag)
+        self.redis.rpush('mq:' + _prefix(tag), '%s ' % tag)
 
     def load_user(self, tag):
         serialized = self.redis.get('user:' + tag)
