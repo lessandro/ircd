@@ -21,11 +21,11 @@ def dispatch(server, user, message):
     cmd, args = split(message, 1)
     cmd = cmd.upper()
 
-    if cmd in commands:
-        f, arity = commands[cmd]
-        f(server, user, *split(args, arity - 1))
-    else:
+    if cmd not in commands:
         return cmd
+
+    f, arity = commands[cmd]
+    f(server, user, *split(args, arity - 1))
 
 
 def load_commands():

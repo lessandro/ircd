@@ -16,6 +16,21 @@ def k0():
     return Kernel(Config())
 
 
+@pytest.fixture
+def k1():
+    r.flushdb()
+    k = Kernel(Config())
+    k.process_message('connect test:__1 ::1')
+    k.process_message('message test:__1 USER test')
+    k.process_message('message test:__1 NICK test')
+    pop()
+    return k
+
+
+def msg(k, message):
+    k.process_message('message test:__1 %s' % message)
+
+
 def pop():
     return r.lpop('mq:test')
 
