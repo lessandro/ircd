@@ -3,6 +3,7 @@ import simplejson as json
 import logging
 import command
 import redis
+import replies
 
 
 class Kernel(object):
@@ -43,10 +44,12 @@ class Kernel(object):
         try:
             message.decode('utf-8')
         except:
-            self.send_raw(user, '999', 'Non-utf8 data')
+            self.send_reply(user, 'ERR_NONUTF8')
             return
 
-        command.dispatch(self, user, message)
+        cmd = command.dispatch(self, user, message)
+        if cmd:
+            self.send_reply(user, 'ERR_UNKNOWNCOMMAND', cmd)
 
     def user_connect(self, tag, address):
         logging.debug('connect %s %s', tag, address)
@@ -85,16 +88,21 @@ class Kernel(object):
         for tag in tags:
             self.user_disconnect(tag, 'server reset')
 
-    def send_chan(self, user, chan, command, args=''):
+    def send_chan(self, user, command, chan, args=''):
         tags = self.redis.smembers('chan-users:' + chan['name'])
         self.send(tags, ':%s %s %s %s' % (
             user['id'], command, chan['name'], args))
 
-    def send_chan_others(self, user, chan, command, args=''):
+    def send_chan_others(self, user, command, chan, args=''):
         tags = self.redis.smembers('chan-users:' + chan['name'])
         tags.remove(user['tag'])
         self.send(tags, ':%s %s %s %s' % (
             user['id'], command, chan['name'], args))
+
+    def send_reply(self, target, reply, *args):
+        numeric, format = replies.replies[reply]
+        self.send(target['tag'], ':%s %s %s %s' % (
+            self.name, numeric, target['nick'], format % args))
 
     def send_raw(self, target, raw, args):
         self.send(target['tag'], ':%s %s %s %s' % (

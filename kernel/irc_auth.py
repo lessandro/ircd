@@ -10,13 +10,13 @@ max_user_len = 10
 @command
 def cmd_nick(server, user, nick):
     if user['nick'] != '*':
-        server.send_raw(user, '999', ':You may not change your nick')
+        server.send_reply(user, 'ERR_ALREADYREGISTRED')
         return
 
     nick_utf8 = nick.decode('utf-8')[:max_nick_len]
 
     if not nick_re.match(nick_utf8):
-        server.send_raw(user, '999', ':Invalid nick')
+        server.send_reply(user, 'ERR_ERRONEOUSNICKNAME', nick)
         return
 
     user['nick'] = nick
@@ -29,11 +29,12 @@ def cmd_user(server, user, username, hostname, servername, realname):
     username = username[:max_user_len]
 
     if not user_re.match(username):
-        server.send_raw(user, '999', ':Invalid username')
+        server.send_reply(user, 'ERR_ERRONEUSUSERNAME', username)
         return
 
     if 'username' in user:
-        server.send_raw(user, '462', ':You may not reregister')
+        server.send_reply(user, 'ERR_ALREADYREGISTRED')
+        return
 
     user['username'] = username
     server.save_user(user)
@@ -53,4 +54,4 @@ def check_auth(server, user):
     user['auth'] = True
     user['id'] = '%s!%s@%s' % (user['nick'], user['username'], user['ip'])
     server.save_user(user)
-    server.send_raw(user, '001', ':Welcome')
+    server.send_reply(user, 'RPL_WELCOME')

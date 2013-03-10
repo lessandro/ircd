@@ -25,7 +25,7 @@ def dispatch(server, user, message):
         f, arity = commands[cmd]
         f(server, user, *split(args, arity - 1))
     else:
-        print 'command', cmd, 'not found'
+        return cmd
 
 
 def load_commands():
