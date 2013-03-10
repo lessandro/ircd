@@ -29,7 +29,7 @@ def cmd_user(server, user, username, hostname, servername, realname):
     username = username[:max_user_len]
 
     if not user_re.match(username):
-        server.send_reply(user, 'ERR_ERRONEUSUSERNAME', username)
+        server.send_reply(user, 'ERR_ERRONEOUSUSERNAME', username)
         return
 
     if 'username' in user:
@@ -43,6 +43,7 @@ def cmd_user(server, user, username, hostname, servername, realname):
 
 def check_auth(server, user):
     if 'auth' in user:
+        # this should never be executed
         return
 
     if 'username' not in user:
