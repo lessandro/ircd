@@ -23,19 +23,22 @@ class Kernel(object):
         while True:
             _, message = self.redis.blpop('mq:kernel')
 
-            kind, origin, data = message.split(' ', 2)
+            self.process_message(message)
 
-            if kind == 'message':
-                self.user_message(origin, data)
+    def process_message(self, message):
+        kind, origin, data = message.split(' ', 2)
 
-            elif kind == 'connect':
-                self.user_connect(origin, data)
+        if kind == 'message':
+            self.user_message(origin, data)
 
-            elif kind == 'disconnect':
-                self.user_disconnect(origin, data)
+        elif kind == 'connect':
+            self.user_connect(origin, data)
 
-            elif kind == 'reset':
-                self.server_reset(origin)
+        elif kind == 'disconnect':
+            self.user_disconnect(origin, data)
+
+        elif kind == 'reset':
+            self.server_reset(origin)
 
     def user_message(self, tag, message):
         logging.debug('message %s %s', tag, message)

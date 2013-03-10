@@ -3,4 +3,5 @@ redis
 ujson
 tornado
 git+https://github.com/lessandro/tornado-redis.git
-
+pytest
+pytest-cov
