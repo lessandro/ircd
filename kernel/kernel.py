@@ -58,7 +58,7 @@ class Kernel(object):
         }
         self.save_user(user)
 
-        prefix = tag[:3]
+        prefix = tag.split(':', 1)[0]
         self.redis.sadd('server-users:' + prefix, tag)
 
     def user_disconnect(self, tag, reason):
@@ -102,13 +102,13 @@ class Kernel(object):
 
     def send(self, tags, message):
         if type(tags) is str:
-            prefix = tags[:3]
+            prefix = tags.split(':', 1)[0]
             self.redis.rpush('mq:' + prefix, '%s %s\r\n' % (tags, message))
             return
 
         prefixes = collections.defaultdict(list)
         for tag in tags:
-            prefixes[tag[:3]].append(tag)
+            prefixes[tag.split(':', 1)[0]].append(tag)
 
         for prefix, tags in prefixes.iteritems():
             tags = ','.join(tags)
@@ -116,7 +116,7 @@ class Kernel(object):
 
     def disconnect(self, user):
         tag = user['tag']
-        self.redis.rpush('mq:' + tag[:3], '%s ' % tag)
+        self.redis.rpush('mq:' + tag.split(':', 1)[0], '%s ' % tag)
 
     def load_user(self, tag):
         serialized = self.redis.get('user:' + tag)
