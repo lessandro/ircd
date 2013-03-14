@@ -15,7 +15,7 @@ def cmd_join(server, user, chan_name):
         return
 
     chan = server.find_or_create_chan(chan_name)
-    if server.user_in_chan(user, chan):
+    if server.nick_in_chan(user, chan):
         server.send_reply(user, 'ERR_ALREADYONCHANNEL', chan_name)
         return
 

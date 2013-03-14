@@ -172,8 +172,11 @@ class Kernel(object):
         self.redis.srem('chan-nicks:' + chan['name'], user['nick'])
         self.redis.srem('user-chans:' + user['tag'], chan['name'])
 
-    def user_in_chan(self, user, chan):
+    def nick_in_chan(self, user, chan):
         return self.redis.sismember('chan-nicks:' + chan['name'], user['nick'])
+
+    def user_in_chan(self, user, chan):
+        return self.redis.sismember('chan-users:' + chan['name'], user['tag'])
 
     def user_chans(self, user):
         return self.redis.smembers('user-chans:' + user['tag'])
