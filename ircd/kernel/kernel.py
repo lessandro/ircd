@@ -146,13 +146,14 @@ class Kernel(object):
     def find_or_create_chan(self, chan_name):
         chan = self.find_chan(chan_name)
         if chan:
-            return chan
+            return chan, False
 
         chan = {
-            'name': chan_name
+            'name': chan_name,
+            'topic': ''
         }
         self.save_chan(chan)
-        return chan
+        return chan, True
 
     def find_chan(self, chan_name):
         chan = self.redis.get('chan:' + chan_name)
@@ -162,18 +163,18 @@ class Kernel(object):
         serialized = json.dumps(chan)
         chan = self.redis.set('chan:' + chan['name'], serialized)
 
-    def join_chan(self, user, chan):
+    def join_chan(self, user, chan, modes):
+        self.redis.hset('chan-nicks:' + chan['name'], user['nick'], modes)
         self.redis.sadd('chan-users:' + chan['name'], user['tag'])
-        self.redis.sadd('chan-nicks:' + chan['name'], user['nick'])
         self.redis.sadd('user-chans:' + user['tag'], chan['name'])
 
     def part_chan(self, user, chan):
+        self.redis.hdel('chan-nicks:' + chan['name'], user['nick'])
         self.redis.srem('chan-users:' + chan['name'], user['tag'])
-        self.redis.srem('chan-nicks:' + chan['name'], user['nick'])
         self.redis.srem('user-chans:' + user['tag'], chan['name'])
 
     def nick_in_chan(self, user, chan):
-        return self.redis.sismember('chan-nicks:' + chan['name'], user['nick'])
+        return self.redis.hexists('chan-nicks:' + chan['name'], user['nick'])
 
     def user_in_chan(self, user, chan):
         return self.redis.sismember('chan-users:' + chan['name'], user['tag'])
@@ -182,7 +183,10 @@ class Kernel(object):
         return self.redis.smembers('user-chans:' + user['tag'])
 
     def chan_count(self, chan):
-        return self.redis.scard('chan-nicks:' + chan['name'])
+        return self.redis.hlen('chan-nicks:' + chan['name'])
+
+    def chan_nicks(self, chan):
+        return self.redis.hgetall('chan-nicks:' + chan['name'])
 
     def destroy_chan(self, chan):
         self.redis.delete('chan:' + chan['name'])

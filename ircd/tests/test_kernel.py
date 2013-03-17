@@ -3,7 +3,8 @@ from testutil import *
 
 def test_reset(k1):
     msg('JOIN #a')
-    pop()
+    while pop():
+        pass
 
     raw('reset test ')
     assert pop() == 'test:__1 :test1!test1@::1 PART #a\r\n'

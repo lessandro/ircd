@@ -14,6 +14,9 @@ def test_join1(k0):
 def test_join2(k1):
     msg('JOIN #a')
     assert pop().split()[2:] == ['JOIN', '#a']
+    assert code() == '331'
+    assert code() == '353'
+    assert code() == '366'
 
     msg('JOIN #a')
     assert code() == '901'  # already joined
@@ -21,7 +24,8 @@ def test_join2(k1):
 
 def test_join3(k1):
     msg('JOIN #a')
-    pop()
+    while pop():
+        pass
 
     raw('connect test:__2 ::2')
     msg('NICK test1', 2)
@@ -39,7 +43,8 @@ def test_part1(k1):
     user(2)
 
     msg('JOIN #a', 2)
-    pop()
+    while pop():
+        pass
 
     msg('PART #a')
     assert code() == '442'  # not on chan
@@ -50,14 +55,36 @@ def test_part1(k1):
 
 def test_part2(k1):
     msg('JOIN #a')
-    pop()
+    while pop():
+        pass
 
     msg('JOIN #b')
-    pop()
+    while pop():
+        pass
 
     user(2)
     msg('JOIN #a', 2)
-    pop()
+    while pop():
+        pass
 
     raw('disconnect test:__1 reason')
     assert pop() == 'test:__1 :test1!test1@::1 PART #b\r\n'
+
+
+def test_names(k1):
+    msg('JOIN #a')
+    raw('connect test:__2 ::2')
+    msg('NICK test2', 2)
+    msg('USER test2', 2)
+    msg('JOIN #a', 2)
+
+    while pop():
+        pass
+
+    msg('NAMES #a')
+    _, serv, code_, equal, nick, chan, nicks = pop().split(' ', 6)
+    assert code_ == '353'
+    nicks = nicks[1:].split()
+    assert '@test1' in nicks
+    assert 'test2' in nicks
+    assert code() == '366'
