@@ -1,16 +1,8 @@
 from command import command
 
 
-@command
+@command(auth=True, args=2)
 def cmd_privmsg(server, user, target, message):
-    if 'auth' not in user:
-        server.send_reply(user, 'ERR_NOTREGISTERED')
-        return
-
-    if not target or not message:
-        server.send_reply(user, 'ERR_NEEDMOREPARAMS', 'PRIVMSG')
-        return
-
     if target[0] == '#':
         chan = server.find_chan(target)
         if not chan:

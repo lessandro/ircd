@@ -7,6 +7,10 @@ def test_join1(k0):
     msg('JOIN #a')
     assert code() == '451'  # not registered
 
+    msg('nick test')
+    msg('user test')
+    pop()
+
     msg('JOIN #!')
     assert code() == '479'  # invalid channel name
 

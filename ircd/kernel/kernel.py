@@ -54,9 +54,7 @@ class Kernel(object):
             self.send_reply(user, 'ERR_NONUTF8')
             return
 
-        cmd = command.dispatch(self, user, message)
-        if cmd:
-            self.send_reply(user, 'ERR_UNKNOWNCOMMAND', cmd)
+        command.dispatch(self, user, message)
 
     def user_connect(self, tag, address):
         logging.debug('connect %s %s', tag, address)
