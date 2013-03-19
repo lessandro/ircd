@@ -13,6 +13,6 @@ def cmd_privmsg(server, user, target, message):
             server.send_reply(user, 'ERR_NOTONCHANNEL', target)
             return
 
-        server.send_chan_others(user, 'PRIVMSG', chan, message)
+        server.send_chan(user, 'PRIVMSG', chan, message, others_only=True)
     else:
         print 'PRIVMSG user'

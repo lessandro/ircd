@@ -93,25 +93,19 @@ class Kernel(object):
         for tag in tags:
             self.user_disconnect(tag, 'server reset')
 
-    def send_chan(self, user, command, chan, args=''):
+    def send_chan(self, user, command, chan, args='', others_only=False):
         tags = self.redis.smembers('chan-users:' + chan['name'])
-        self.send(tags, ':%s %s %s %s' % (
-            user['id'], command, chan['name'], args))
+        if others_only:
+            tags.remove(user['tag'])
+        self.send_command(tags, user, command, chan['name'], args)
 
-    def send_chan_others(self, user, command, chan, args=''):
-        tags = self.redis.smembers('chan-users:' + chan['name'])
-        tags.remove(user['tag'])
-        self.send(tags, ':%s %s %s %s' % (
-            user['id'], command, chan['name'], args))
+    def send_command(self, tags, source, command, target, args):
+        self.send(tags, ':%s %s %s %s' % (source['id'], command, target, args))
 
-    def send_reply(self, target, reply, *args):
-        numeric, format = replies.replies[reply]
-        self.send(target['tag'], ':%s %s %s %s' % (
-            self.name, numeric, target['nick'], format % args))
-
-    def send_raw(self, target, raw, args):
-        self.send(target['tag'], ':%s %s %s %s' % (
-            self.name, raw, target['nick'], args))
+    def send_reply(self, user, reply, *args):
+        numeric, format = replies.replies.get(reply, (reply, '%s'))
+        self.send(user['tag'], ':%s %s %s %s' % (
+            self.name, numeric, user['nick'], format % args))
 
     def send(self, tags, message):
         message = message.strip()

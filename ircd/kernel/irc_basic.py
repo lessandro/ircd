@@ -3,7 +3,7 @@ from command import command
 
 @command
 def cmd_ping(server, user, args):
-    server.send_raw(user, 'PONG', args)
+    server.send_reply(user, 'PONG', args)
 
 
 @command
