@@ -81,6 +81,9 @@ class Kernel(object):
         for chan_name in chans:
             command.dispatch(self, user, 'PART %s' % chan_name)
 
+        if 'auth' in user:
+            self.unregister_nick(user)
+
         self.redis.delete('user:' + tag)
 
         prefix = _prefix(tag)
@@ -182,3 +185,12 @@ class Kernel(object):
 
     def destroy_chan(self, chan):
         self.redis.delete('chan:' + chan['name'])
+
+    def register_nick(self, user):
+        self.redis.sadd('nick-users:' + user['nick'], user['tag'])
+
+    def unregister_nick(self, user):
+        self.redis.srem('nick-users:' + user['nick'], user['tag'])
+
+    def find_nick(self, nick):
+        return self.redis.smembers('nick-users:' + nick)

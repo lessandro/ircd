@@ -15,4 +15,9 @@ def cmd_privmsg(server, user, target, message):
 
         server.send_chan(user, 'PRIVMSG', chan, message, others_only=True)
     else:
-        print 'PRIVMSG user'
+        tags = server.find_nick(target)
+        if not tags:
+            server.send_reply(user, 'ERR_NOSUCHNICK', target)
+            return
+
+        server.send_command(tags, user, 'PRIVMSG', target, message)

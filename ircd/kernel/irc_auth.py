@@ -55,4 +55,5 @@ def check_auth(server, user):
     user['auth'] = True
     user['id'] = '%s!%s@%s' % (user['nick'], user['username'], user['ip'])
     server.save_user(user)
+    server.register_nick(user)
     server.send_reply(user, 'RPL_WELCOME')
