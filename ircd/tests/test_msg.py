@@ -59,3 +59,10 @@ def test_privmsg_user(k1):
     raw('disconnect test:__2 ')
     msg('PRIVMSG test2 :hi')
     assert pop() == 'test:__2b :test1!test1@::1 PRIVMSG test2 :hi\r\n'
+
+
+def test_notice(k1):
+    user(2)
+
+    msg('NOTICE test2 hello')
+    assert pop() == 'test:__2 :test1!test1@::1 NOTICE test2 hello\r\n'
