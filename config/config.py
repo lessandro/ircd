@@ -19,4 +19,4 @@ flash_policy_file = os.path.join(config_path, 'policy.xml')
 
 # redis
 
-redis_db = 0
+redis_db = 7
