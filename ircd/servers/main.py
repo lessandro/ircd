@@ -1,10 +1,21 @@
+import time
+import signal
 import logging
 import tornado.ioloop
+
+servers = []
+
+
+def sig_handler(sig, frame):
+    for server in servers:
+        server.stop()
+
+    io_loop = tornado.ioloop.IOLoop.instance()
+    io_loop.add_timeout(time.time() + 0.01, io_loop.stop)
 
 
 def main(server_types, config):
     logging.getLogger().setLevel(logging.INFO)
-    servers = []
 
     if 'tcp' in server_types:
         import tcpserver
@@ -14,9 +25,8 @@ def main(server_types, config):
         import sioserver
         servers.append(sioserver.SioServer(config))
 
-    try:
-        logging.info('Starting ioloop')
-        tornado.ioloop.IOLoop.instance().start()
-    except KeyboardInterrupt:
-        for server in servers:
-            server.stop()
+    signal.signal(signal.SIGTERM, sig_handler)
+    signal.signal(signal.SIGINT, sig_handler)
+
+    logging.info('Starting ioloop')
+    tornado.ioloop.IOLoop.instance().start()
