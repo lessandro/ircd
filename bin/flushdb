@@ -1,0 +1,12 @@
+#!/usr/bin/env python
+
+import os
+import sys
+parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, parentdir)
+
+import redis
+from config import config
+
+r = redis.StrictRedis(db=config.redis_db)
+r.flushdb()
