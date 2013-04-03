@@ -1,11 +1,11 @@
 import logging
 import functools
 import tornado.gen
-import tornado.netutil
+import tornado.tcpserver
 from server import Server
 
 
-class TCPServer(tornado.netutil.TCPServer):
+class TCPServer(tornado.tcpserver.TCPServer):
     @tornado.gen.engine
     def __init__(self, config):
         super(TCPServer, self).__init__()
