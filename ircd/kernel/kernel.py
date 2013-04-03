@@ -1,5 +1,5 @@
 import collections
-import ujson as json
+import msgpack as json
 import logging
 import command
 import redis

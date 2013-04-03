@@ -1,8 +1,8 @@
 TornadIO2==0.0.4
 redis==2.7.2
-ujson==1.30
 tornado==3.0
 git+https://github.com/lessandro/tornado-redis.git
 pytest==2.3.4
 pytest-cov==1.6
 supervisor==3.0b1
+msgpack-python==0.3.0

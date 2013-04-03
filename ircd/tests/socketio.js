@@ -25,7 +25,7 @@ s.on('disconnect', function() {
 
 var i = 0;
 var x = setInterval(function() {
-    send("PRIVMSG #asd :hello " + i);
+    send("PRIVMSG #asd :привет " + i);
     if (i++ == 4) {
         s.disconnect();
         clearInterval(x);
