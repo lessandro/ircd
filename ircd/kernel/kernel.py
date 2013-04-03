@@ -38,7 +38,7 @@ class Kernel(object):
             self.user_disconnect(origin, data)
 
         elif kind == 'reset':
-            self.server_reset(origin)
+            self.server_reset(origin, data)
 
     def user_message(self, tag, message):
         logging.debug('message %s %s', tag, message)
@@ -89,12 +89,12 @@ class Kernel(object):
         prefix = _prefix(tag)
         self.redis.srem('server-users:' + prefix, tag)
 
-    def server_reset(self, prefix):
-        logging.debug('reset %s', prefix)
+    def server_reset(self, prefix, reason):
+        logging.debug('reset %s %s', prefix, reason)
 
         tags = self.redis.smembers('server-users:' + prefix)
         for tag in tags:
-            self.user_disconnect(tag, 'server reset')
+            self.user_disconnect(tag, reason)
 
     def send_chan(self, user, command, chan, args='', others_only=False):
         tags = self.redis.smembers('chan-users:' + chan['name'])

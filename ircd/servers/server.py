@@ -12,14 +12,14 @@ class Server(object):
         self.mq_in = redisutil.RedisMQ('mq:' + self.name, config.redis_db)
 
     def stop(self):
-        self.mq.send('reset %s ' % self.name)
+        self.mq.send('reset %s server stop' % self.name)
 
     @tornado.gen.engine
     def connect(self, callback=None):
         yield tornado.gen.Task(self.mq.connect)
         yield tornado.gen.Task(self.mq_in.connect)
         self.mq_in.loop(self.server_message)
-        self.mq.send('reset %s ' % self.name)
+        self.mq.send('reset %s server restart' % self.name)
         callback()
 
     def make_tag(self, address, port):
