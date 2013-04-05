@@ -4,6 +4,7 @@ A hot-swappable, non-compliant IRCd.
 
 ## Dependencies
 
+    redis-server
     pip install -r requirements.txt
 
 ## Configuration
@@ -13,6 +14,10 @@ A hot-swappable, non-compliant IRCd.
 ## Running
 
     bin/runservers
+
+## Testing
+
+    bin/runtests
 
 ## Supervisord ctl
 
