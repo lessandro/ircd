@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.min.js "></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js"></script>
+    <style type="text/css">
+        body {
+            font-family: monospace;
+        }
+        #chat {
+            width: 100%;
+        }
+        #input {
+            margin-top: 10px;
+            width: 100%;
+        }
+        #submit {
+            display: none;
+        }
+    </style>
+    <script>
+    $(function() {
+        var s = new io.connect('http://localhost:8001', {
+            rememberTransport: false
+        });
+
+        function show(text) {
+            $("#chat").append("<div>" + text + "</div>");
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        function send(data) {
+            show(">>> " + data);
+            s.send(data + "\r\n");
+        }
+
+        s.on('connect', function() {
+            show('* connected')
+            send('NICK zxc');
+            send('USER zxc zxc zxc zxc');
+        });
+
+        s.on('message', function(data) {
+            show("<<< " + data);
+        });
+
+        s.on('disconnect', function() {
+            show("* disconnected");
+        })
+
+        $('#chatform').submit(function() {
+            send($('#chatform [type=text]').val());
+            $('#chatform [type=text]').val('');
+            return false;
+        });
+    });
+    </script>
+</head>
+<body>
+    <div id="chat"></div>
+    <form id="chatform">
+        <input type="text" id="input" />
+        <input type="submit" id="submit" />
+    </form>
+</body>
+</html>
