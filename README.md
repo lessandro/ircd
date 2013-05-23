@@ -28,6 +28,11 @@ A hot-swappable, non-compliant IRCd.
     git pull # or edit files
     bin/ctl restart kernel
 
+Automatically:
+
+    pip install pywatch
+    bin/watch
+
 ## Stopping
 
     bin/ctl stop all
