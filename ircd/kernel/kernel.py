@@ -12,6 +12,8 @@ def _prefix(tag):
 
 class Kernel(object):
     def __init__(self, config):
+        self.running = True
+        self.message = None
         self.name = config.server_name
 
         command.load_commands()
@@ -20,10 +22,17 @@ class Kernel(object):
     def loop(self):
         logging.info('IRCd started')
 
-        while True:
-            _, message = self.redis.blpop('mq:kernel')
+        while self.running:
+            _, self.message = self.redis.blpop('mq:kernel')
+            self.process_message(self.message)
+            self.message = None
 
-            self.process_message(message)
+    def stop(self):
+        logging.info('IRCd stopped')
+        self.running = False
+        if not self.message:
+            import sys
+            sys.exit(0)
 
     def process_message(self, message):
         kind, origin, data = message.split(' ', 2)
