@@ -21,3 +21,15 @@ def test_nouser(k0):
 
     raw('disconnect test:__1 ')
     assert code() is None
+
+
+def test_main():
+    from ircd.kernel.main import main
+
+    r = redis.StrictRedis(db=1)
+    r.rpush('mq:kernel', 'shutdown test test')
+
+    main(Config())
+
+    # control should reach here
+    assert True
