@@ -21,19 +21,29 @@ class TCPServer(tornado.tcpserver.TCPServer):
 
     def handle_stream(self, stream, address):
         tag = self.server.make_tag(address[0], address[1])
-        on_data = functools.partial(self.handle_data, tag)
-        stream.read_until_close(on_data, on_data)
 
-        def handler(data):
-            if data:
-                stream.write(data)
-            else:
-                stream.close()
+        u_handler = functools.partial(self.handle_user_data, tag)
+        stream.read_until_close(u_handler, u_handler)
 
-        self.server.user_connect(tag, address[0], handler)
+        s_handler = functools.partial(self.handle_server_data, tag, stream)
+        self.server.user_connect(tag, address[0], s_handler)
 
-    def handle_data(self, tag, data):
+    def handle_user_data(self, tag, data):
         if data:
             self.server.user_message(tag, data)
         else:
             self.server.user_disconnect(tag)
+
+    def handle_server_data(self, tag, stream, data):
+        try:
+            if data:
+                # this might fail if the connection is closed
+                stream.write(data)
+            else:
+                stream.close()
+        except:
+            # close and notify closed
+            try:
+                stream.close()
+            finally:
+                self.server.user_disconnect(tag)

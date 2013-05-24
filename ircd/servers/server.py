@@ -52,6 +52,7 @@ class Server(object):
                 self.mq.send('message %s %s' % (tag, message))
 
     def user_disconnect(self, tag, reason=''):
-        del self.users[tag]
-        del self.buffers[tag]
-        self.mq.send('disconnect %s %s' % (tag, reason))
+        if tag in self.users:
+            del self.users[tag]
+            del self.buffers[tag]
+            self.mq.send('disconnect %s %s' % (tag, reason))
