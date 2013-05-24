@@ -49,6 +49,9 @@ class Kernel(object):
         elif kind == 'reset':
             self.server_reset(origin, data)
 
+        elif kind == 'shutdown':
+            self.stop()
+
     def user_message(self, tag, message):
         logging.debug('message %s %s', tag, message)
 
