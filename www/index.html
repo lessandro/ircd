@@ -59,6 +59,10 @@
             $('#chatform [type=text]').val('');
             return false;
         });
+
+        $(window).unload(function() {
+            s.disconnect();
+        });
     });
     </script>
 </head>
