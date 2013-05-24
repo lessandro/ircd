@@ -20,6 +20,11 @@ class Kernel(object):
         self.redis = redis.StrictRedis(db=config.redis_db)
 
     def loop(self):
+        """
+        Infinite get message/process message loop
+
+        Messages are read from a redis list that works like a message queue.
+        """
         logging.info('IRCd started')
 
         while self.running:
@@ -28,9 +33,21 @@ class Kernel(object):
             self.message = None
 
     def stop(self):
+        """
+        Stop the infinite loop
+
+        This method can be called from a signal handler or from inside
+        process_message().
+        """
+
         logging.info('IRCd stopped')
+
+        # exit the loop during the next iteration
         self.running = False
+
         if not self.message:
+            # if a message is not being processed the process might be
+            # blocked in redis.blpop(), in this case just exit
             import sys
             sys.exit(0)
 
