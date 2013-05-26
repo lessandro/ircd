@@ -27,9 +27,12 @@ def cmd_join(server, user, chan_name):
 
 
 def map_mode(mode):
+    symbol = ''
     if 'o' in mode:
-        return '@'
-    return ''
+        symbol += '@'
+    if 'v' in mode:
+        symbol += '+'
+    return symbol
 
 
 def send_names(server, user, chan):
