@@ -15,6 +15,7 @@ replies = {
     'ERR_NEEDMOREPARAMS': ('461', '%s :Not enough parameters'),
     'ERR_ALREADYREGISTRED': ('462', ':Already registered'),
     'ERR_BADCHANNAME': ('479', '%s :Illegal channel name'),
+    'ERR_CHANOPRIVSNEEDED': ('482', '%s :You\'re not channel operator'),
 
     'ERR_ALREADYONCHANNEL': ('901', '%s :You\'re already on that channel'),
     'ERR_ERRONEOUSUSERNAME': ('902', '%s :Erroneous username'),

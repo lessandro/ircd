@@ -212,6 +212,12 @@ class Kernel(object):
     def chan_nicks(self, chan):
         return self.redis.hgetall('chan-nicks:' + chan['name'])
 
+    def chan_nick(self, chan, nick):
+        return self.redis.hget('chan-nicks:' + chan['name'], nick)
+
+    def set_chan_nick_modes(self, chan, nick, modes):
+        self.redis.hset('chan-nicks:' + chan['name'], nick, modes)
+
     def destroy_chan(self, chan):
         self.redis.delete('chan:' + chan['name'])
 
