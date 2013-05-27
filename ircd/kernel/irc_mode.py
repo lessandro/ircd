@@ -1,4 +1,3 @@
-import logging
 from command import command
 from ..common.util import split
 
@@ -12,7 +11,7 @@ def cmd_mode(server, user, target, mode):
             return
 
         own_modes = server.chan_nick(chan, user['nick'])
-        if 'o' not in own_modes:
+        if not own_modes or 'o' not in own_modes:
             server.send_reply(user, 'ERR_CHANOPRIVSNEEDED', chan['name'])
             return
 
@@ -29,18 +28,16 @@ def cmd_mode(server, user, target, mode):
 
                 if not target:
                     # no target supplied
-                    logging.debug('no target supplied')
                     continue
 
                 target_modes = server.chan_nick(chan, target)
                 if target_modes is None:
-                    # target not in chan
-                    logging.debug('target not in chan')
+                    server.send_reply(
+                        user, 'ERR_USERNOTINCHANNEL', target, chan['name'])
                     continue
 
                 # check if it's necessary to add or remove the mode
                 if not ((c in target_modes) ^ adding):
-                    logging.debug('not necessary')
                     continue
 
                 if adding:
@@ -52,6 +49,9 @@ def cmd_mode(server, user, target, mode):
 
                 args = '%s%s %s' % ('+' if adding else '-', c, target)
                 server.send_chan(user, 'MODE', chan, args)
+
+            else:
+                server.send_reply(user, 'ERR_UNKNOWNMODE', c)
     else:
         # user mode
         pass
