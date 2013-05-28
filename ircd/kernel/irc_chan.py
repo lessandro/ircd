@@ -14,7 +14,11 @@ def join_chan(server, user, chan_name):
         server.send_reply(user, 'ERR_ALREADYONCHANNEL', chan_name)
         return
 
-    server.join_chan(user, chan, 'o' if created else '')
+    data = {
+        'modes': 'o' if created else '',
+        'tag': user['tag']
+    }
+    server.join_chan(user, chan, data)
     server.send_chan(user, 'JOIN', chan)
 
     if chan['topic']:
@@ -43,8 +47,8 @@ def map_mode(mode):
 
 def send_names(server, user, chan):
     nicks = []
-    for nick, mode in server.chan_nicks(chan).iteritems():
-        nicks.append('%s%s' % (map_mode(mode), nick))
+    for nick, data in server.chan_nicks(chan):
+        nicks.append('%s%s' % (map_mode(data['modes']), nick))
     nick_list = ' '.join(nicks)
 
     server.send_reply(user, 'RPL_NAMREPLY', chan['name'], nick_list)

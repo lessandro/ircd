@@ -187,8 +187,8 @@ class Kernel(object):
         serialized = json.dumps(chan)
         chan = self.redis.set('chan:' + chan['name'], serialized)
 
-    def join_chan(self, user, chan, modes):
-        self.redis.hset('chan-nicks:' + chan['name'], user['nick'], modes)
+    def join_chan(self, user, chan, data):
+        self.set_chan_nick(chan, user['nick'], data)
         self.redis.sadd('chan-users:' + chan['name'], user['tag'])
         self.redis.sadd('user-chans:' + user['tag'], chan['name'])
 
@@ -213,13 +213,16 @@ class Kernel(object):
         return self.redis.hlen('chan-nicks:' + chan['name'])
 
     def chan_nicks(self, chan):
-        return self.redis.hgetall('chan-nicks:' + chan['name'])
+        nicks = self.redis.hgetall('chan-nicks:' + chan['name'])
+        return [(nick, json.loads(data)) for nick, data in nicks.iteritems()]
 
     def chan_nick(self, chan, nick):
-        return self.redis.hget('chan-nicks:' + chan['name'], nick)
+        serialized = self.redis.hget('chan-nicks:' + chan['name'], nick)
+        return serialized and json.loads(serialized)
 
-    def set_chan_nick_modes(self, chan, nick, modes):
-        self.redis.hset('chan-nicks:' + chan['name'], nick, modes)
+    def set_chan_nick(self, chan, nick, data):
+        serialized = json.dumps(data)
+        self.redis.hset('chan-nicks:' + chan['name'], nick, serialized)
 
     def destroy_chan(self, chan):
         self.redis.delete('chan:' + chan['name'])
