@@ -1,3 +1,6 @@
 #!/bin/sh
 
-pywatch "bin/runtests && bin/ctl restart kernel" ircd/kernel/*.py
+pywatch "bin/runtests && bin/ctl restart kernel" \
+    ircd/common/*.py \
+    ircd/kernel/*.py \
+    ircd/tests/*.py
