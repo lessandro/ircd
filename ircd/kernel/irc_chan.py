@@ -60,5 +60,3 @@ def irc_names(server, user, chan):
 def cmd_part(server, user, chan):
     server.send_chan(user, 'PART', chan)
     server.part_chan(user, chan)
-    if not server.chan_count(chan):
-        server.destroy_chan(chan)

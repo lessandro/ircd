@@ -197,6 +197,9 @@ class Kernel(object):
         self.redis.srem('chan-users:' + chan['name'], user['tag'])
         self.redis.srem('user-chans:' + user['tag'], chan['name'])
 
+        if not self.chan_count(chan):
+            self.destroy_chan(chan)
+
     def nick_in_chan(self, user, chan):
         return self.redis.hexists('chan-nicks:' + chan['name'], user['nick'])
 
