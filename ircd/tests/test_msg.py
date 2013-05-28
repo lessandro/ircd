@@ -15,7 +15,7 @@ def test_privmsg_chan(k1):
         pass
 
     msg('PRIVMSG #a abc')
-    assert pop() == 'test:__2 :test1!test1@::1 PRIVMSG #a abc\r\n'
+    assert pop() == 'test:__2 :test1!test1@::1 PRIVMSG #a :abc\r\n'
 
     raw('connect test:__3 ::3')
     msg('PRIVMSG #a zxc', 3)
@@ -66,4 +66,4 @@ def test_notice(k1):
     user(2)
 
     msg('NOTICE test2 hello')
-    assert pop() == 'test:__2 :test1!test1@::1 NOTICE test2 hello\r\n'
+    assert pop() == 'test:__2 :test1!test1@::1 NOTICE test2 :hello\r\n'

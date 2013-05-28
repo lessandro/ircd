@@ -1,7 +1,10 @@
 from command import command
+from ..common.util import colon
 
 
 def send_message(kind, server, user, target, message):
+    message = colon(message)
+
     if target[0] == '#':
         chan = server.find_chan(target)
         if not chan:

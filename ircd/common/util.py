@@ -5,3 +5,10 @@ def split(s, n):
     splitted = s.split(' ', n)
     splitted.extend([''] * (n + 1 - len(splitted)))
     return splitted
+
+
+def colon(s):
+    """
+    Prefix strings with :
+    """
+    return s if s[0:1] == ':' else ':' + s
