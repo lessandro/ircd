@@ -4,8 +4,7 @@ from command import command
 chan_re = re.compile(r'^#\w+$')
 
 
-@command(auth=True, args=1)
-def cmd_join(server, user, chan_name):
+def join_chan(server, user, chan_name):
     if not chan_re.match(chan_name):
         server.send_reply(user, 'ERR_BADCHANNAME', chan_name)
         return
@@ -24,6 +23,13 @@ def cmd_join(server, user, chan_name):
         server.send_reply(user, 'RPL_NOTOPIC', chan['name'])
 
     send_names(server, user, chan)
+
+
+@command(auth=True, args=1)
+def cmd_join(server, user, chanlist):
+    chans = chanlist.split(',')
+    for chan_name in chans:
+        join_chan(server, user, chan_name)
 
 
 def map_mode(mode):
