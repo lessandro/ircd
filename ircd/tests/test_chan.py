@@ -9,8 +9,7 @@ def test_join1(k0):
 
     msg('nick test')
     msg('user test')
-    while pop():
-        pass
+    popall()
 
     msg('JOIN #!')
     assert code() == '479'  # invalid channel name
@@ -29,15 +28,13 @@ def test_join2(k1):
 
 def test_join3(k1):
     msg('JOIN #a')
-    while pop():
-        pass
+    popall()
 
     raw('connect test:__2 ::2')
     msg('NICK test1', 2)
     msg('USER test1', 2)
     assert code() == '001'
-    while pop():
-        pass
+    popall()
 
     msg('JOIN #a', 2)
     assert code() == '901'  # already joined
@@ -50,8 +47,7 @@ def test_part1(k1):
     user(2)
 
     msg('JOIN #a', 2)
-    while pop():
-        pass
+    popall()
 
     msg('PART #a')
     assert code() == '442'  # not on chan
@@ -62,17 +58,14 @@ def test_part1(k1):
 
 def test_part2(k1):
     msg('JOIN #a')
-    while pop():
-        pass
+    popall()
 
     msg('JOIN #b')
-    while pop():
-        pass
+    popall()
 
     user(2)
     msg('JOIN #a', 2)
-    while pop():
-        pass
+    popall()
 
     raw('disconnect test:__1 reason')
     assert pop() == 'test:__1 :test1!test1@::1 PART #b\r\n'
@@ -85,8 +78,7 @@ def test_names(k1):
     msg('USER test2', 2)
     msg('JOIN #a', 2)
 
-    while pop():
-        pass
+    popall()
 
     msg('NAMES #a')
     _, serv, code_, equal, nick, chan, nicks = pop().split(' ', 6)
@@ -99,8 +91,7 @@ def test_names(k1):
 
 def test_multiple(k1):
     msg('JOIN #a,#b')
-    while pop():
-        pass
+    popall()
 
     msg('PRIVMSG #a :oi')
     msg('PRIVMSG #b :oi')

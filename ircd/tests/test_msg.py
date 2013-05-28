@@ -4,15 +4,13 @@ from testutil import *
 def test_privmsg_chan(k1):
     msg('JOIN #a')
     assert code() == 'JOIN'
-    while pop():
-        pass
+    popall()
 
     user(2)
 
     msg('JOIN #a', 2)
     assert code() == 'JOIN'
-    while pop():
-        pass
+    popall()
 
     msg('PRIVMSG #a abc')
     assert pop() == 'test:__2 :test1!test1@::1 PRIVMSG #a :abc\r\n'
@@ -46,8 +44,7 @@ def test_privmsg_user(k1):
     raw('connect test:__2b ::2')
     raw('message test:__2b NICK test2')
     raw('message test:__2b USER test2')
-    while pop():
-        pass
+    popall()
 
     msg('PRIVMSG test2 :hi2')
     tags, message = pop().split(' ', 1)

@@ -30,8 +30,7 @@ def user(n=1):
     raw('connect test:__%d ::%d' % (n, n))
     msg('USER test%d' % n, n)
     msg('NICK test%d' % n, n)
-    while pop():
-        pass
+    popall()
 
 
 def raw(message):
@@ -44,6 +43,11 @@ def msg(message, n=1):
 
 def pop():
     return r.lpop('mq:test')
+
+
+def popall():
+    while pop():
+        pass
 
 
 def code(reply=None):

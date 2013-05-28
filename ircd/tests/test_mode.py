@@ -7,8 +7,7 @@ def test_mode_chan(k1):
     msg('JOIN #a', 2)
     msg('JOIN #b', 2)
 
-    while pop():
-        pass
+    popall()
 
     msg('MODE #c +o test')
     assert code() == '403'  # no such channel
@@ -41,8 +40,7 @@ def test_mode_chan(k1):
     assert pop() == 'test:__1,test:__2 :test2!test2@::2 MODE #a -o test2\r\n'
 
     user(3)
-    while pop():
-        pass
+    popall()
 
     msg('JOIN #a', 3)
     pop()  # JOIN
