@@ -30,7 +30,8 @@ def user(n=1):
     raw('connect test:__%d ::%d' % (n, n))
     msg('USER test%d' % n, n)
     msg('NICK test%d' % n, n)
-    pop()
+    while pop():
+        pass
 
 
 def raw(message):

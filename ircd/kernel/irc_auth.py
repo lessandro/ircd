@@ -57,3 +57,5 @@ def check_auth(server, user):
     server.save_user(user)
     server.register_nick(user)
     server.send_reply(user, 'RPL_WELCOME')
+    server.send_reply(user, 'RPL_MYINFO')
+    server.send_reply(user, 'RPL_ISUPPORT')

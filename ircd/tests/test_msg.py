@@ -46,7 +46,8 @@ def test_privmsg_user(k1):
     raw('connect test:__2b ::2')
     raw('message test:__2b NICK test2')
     raw('message test:__2b USER test2')
-    pop()
+    while pop():
+        pass
 
     msg('PRIVMSG test2 :hi2')
     tags, message = pop().split(' ', 1)

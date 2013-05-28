@@ -9,7 +9,8 @@ def test_join1(k0):
 
     msg('nick test')
     msg('user test')
-    pop()
+    while pop():
+        pass
 
     msg('JOIN #!')
     assert code() == '479'  # invalid channel name
@@ -35,6 +36,8 @@ def test_join3(k1):
     msg('NICK test1', 2)
     msg('USER test1', 2)
     assert code() == '001'
+    while pop():
+        pass
 
     msg('JOIN #a', 2)
     assert code() == '901'  # already joined
