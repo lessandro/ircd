@@ -95,3 +95,13 @@ def test_names(k1):
     assert '@test1' in nicks
     assert 'test2' in nicks
     assert code() == '366'
+
+
+def test_multiple(k1):
+    msg('JOIN #a,#b')
+    while pop():
+        pass
+
+    msg('PRIVMSG #a :oi')
+    msg('PRIVMSG #b :oi')
+    assert pop() is None
