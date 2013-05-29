@@ -56,6 +56,22 @@ def mode_chan(server, user, target, args):
             args = '%s%s %s' % ('+' if adding else '-', c, target)
             server.send_chan(user, 'MODE', chan, args)
 
+        elif c in 'm':
+            chan_modes = chan['modes']
+            if not ((c in chan_modes) ^ adding):
+                continue
+
+            if adding:
+                chan_modes += c
+            else:
+                chan_modes = chan_modes.replace(c, '')
+
+            chan['modes'] = chan_modes
+            server.save_chan(chan)
+
+            args = '%s%s' % ('+' if adding else '-', c)
+            server.send_chan(user, 'MODE', chan, args)
+
         else:
             server.send_reply(user, 'ERR_UNKNOWNMODE', c)
 
