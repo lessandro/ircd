@@ -4,6 +4,7 @@ replies = {
     'RPL_ISUPPORT': ('005', 'PREFIX=(ov)@+ CHANTYPES=# CHARSET=UTF-8 ' +
                             ':are supported by this server'),
 
+    'RPL_CHANNELMODEIS': ('324', '%s +%s'),
     'RPL_NOTOPIC': ('331', '%s :No topic is set'),
     'RPL_TOPIC': ('332', '%s :%s'),
     'RPL_NAMREPLY': ('353', '= %s :%s'),

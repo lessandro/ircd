@@ -175,7 +175,8 @@ class Kernel(object):
 
         chan = {
             'name': chan_name,
-            'topic': ''
+            'topic': '',
+            'modes': ''
         }
         self.save_chan(chan)
         return chan, True

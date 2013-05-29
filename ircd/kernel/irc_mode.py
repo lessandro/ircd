@@ -8,6 +8,11 @@ def mode_chan(server, user, target, args):
         server.send_reply(user, 'ERR_NOSUCHCHANNEL', target)
         return
 
+    if not args:
+        server.send_reply(user, 'RPL_CHANNELMODEIS',
+                          chan['name'], chan['modes'])
+        return
+
     own_data = server.chan_nick(chan, user['nick'])
     if not own_data or 'o' not in own_data['modes']:
         server.send_reply(user, 'ERR_CHANOPRIVSNEEDED', chan['name'])
