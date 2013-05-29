@@ -11,7 +11,10 @@ def send_message(kind, server, user, target, message):
             server.send_reply(user, 'ERR_NOSUCHCHANNEL', target)
             return
 
-        if not server.user_in_chan(user, chan):
+        # it's actually ok to send a message across connections if both
+        # are authenticated and with the same nick
+        user_data = server.chan_nick(chan, user['nick'])
+        if not user_data:
             server.send_reply(user, 'ERR_NOTONCHANNEL', target)
             return
 

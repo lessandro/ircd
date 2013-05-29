@@ -128,7 +128,7 @@ class Kernel(object):
     def send_chan(self, user, command, chan, args='', others_only=False):
         tags = self.redis.smembers('chan-users:' + chan['name'])
         if others_only:
-            tags.remove(user['tag'])
+            tags.discard(user['tag'])
         self.send_command(tags, user, command, chan['name'], args)
 
     def send_command(self, tags, source, command, target, args):
