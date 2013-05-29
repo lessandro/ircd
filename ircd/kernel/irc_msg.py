@@ -18,6 +18,13 @@ def send_message(kind, server, user, target, message):
             server.send_reply(user, 'ERR_NOTONCHANNEL', target)
             return
 
+        if 'm' in chan['modes']:
+            modes = user_data['modes']
+            can_talk = 'o' in modes or 'v' in modes
+            if not can_talk:
+                server.send_reply(user, 'ERR_CANNOTSENDTOCHAN', chan['name'])
+                return
+
         server.send_chan(user, kind, chan, message, others_only=True)
     else:
         tags = server.find_nick(target)
