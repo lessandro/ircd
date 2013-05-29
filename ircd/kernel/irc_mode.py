@@ -13,8 +13,8 @@ def mode_chan(server, user, target, args):
                           chan['name'], chan['modes'])
         return
 
-    own_data = server.chan_nick(chan, user['nick'])
-    if not own_data or 'o' not in own_data['modes']:
+    user_data = server.chan_nick(chan, user['nick'])
+    if not user_data or 'o' not in user_data['modes']:
         server.send_reply(user, 'ERR_CHANOPRIVSNEEDED', chan['name'])
         return
 

@@ -22,7 +22,6 @@ def join_chan(server, user, chan_name):
     server.join_chan(user, chan, data)
     server.send_chan(user, 'JOIN', chan)
 
-
     send_topic(server, user, chan)
     send_names(server, user, chan)
 
