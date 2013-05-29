@@ -56,3 +56,26 @@ def test_mode_chan(k1):
     assert code() == 'MODE'
     assert code() == 'MODE'
     assert not pop()  # no target supplied for last +v
+
+
+def test_mode_chan2(k1):
+    msg('JOIN #a')
+    popall()
+
+    msg('MODE #a')
+    assert pop() == 'test:__1 :testserver 324 test1 #a +\r\n'
+
+    msg('MODE #a +m')
+    assert pop() == 'test:__1 :test1!test1@::1 MODE #a +m\r\n'
+
+    msg('MODE #a +m')
+    assert not pop()
+
+    msg('MODE #a')
+    assert pop() == 'test:__1 :testserver 324 test1 #a +m\r\n'
+
+    msg('MODE #a -m')
+    assert pop() == 'test:__1 :test1!test1@::1 MODE #a -m\r\n'
+
+    msg('MODE #a')
+    assert pop() == 'test:__1 :testserver 324 test1 #a +\r\n'
