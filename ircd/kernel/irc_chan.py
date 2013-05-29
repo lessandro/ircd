@@ -1,5 +1,6 @@
 import re
 from command import command
+from ..common.util import decolon
 
 chan_re = re.compile(r'^#\w+$')
 
@@ -21,11 +22,8 @@ def join_chan(server, user, chan_name):
     server.join_chan(user, chan, data)
     server.send_chan(user, 'JOIN', chan)
 
-    if chan['topic']:
-        server.send_reply(user, 'RPL_TOPIC', chan['name'], chan['topic'])
-    else:
-        server.send_reply(user, 'RPL_NOTOPIC', chan['name'])
 
+    send_topic(server, user, chan)
     send_names(server, user, chan)
 
 
@@ -55,6 +53,13 @@ def send_names(server, user, chan):
     server.send_reply(user, 'RPL_ENDOFNAMES', chan['name'])
 
 
+def send_topic(server, user, chan):
+    if chan['topic']:
+        server.send_reply(user, 'RPL_TOPIC', chan['name'], chan['topic'])
+    else:
+        server.send_reply(user, 'RPL_NOTOPIC', chan['name'])
+
+
 @command(chan=True)
 def irc_names(server, user, chan):
     send_names(server, user, chan)
@@ -64,3 +69,19 @@ def irc_names(server, user, chan):
 def cmd_part(server, user, chan):
     server.send_chan(user, 'PART', chan)
     server.part_chan(user, chan)
+
+
+@command(chan=True)
+def cmd_topic(server, user, chan, topic):
+    if not topic:
+        send_topic(server, user, chan)
+        return
+
+    own_data = server.chan_nick(chan, user['nick'])
+    if not own_data or 'o' not in own_data['modes']:
+        server.send_reply(user, 'ERR_CHANOPRIVSNEEDED', chan['name'])
+        return
+
+    chan['topic'] = decolon(topic)
+    server.save_chan(chan)
+    server.send_chan(user, 'TOPIC', chan, ':%s' % chan['topic'])

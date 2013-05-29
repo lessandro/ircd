@@ -12,3 +12,10 @@ def colon(s):
     Prefix strings with :
     """
     return s if s[0:1] == ':' else ':' + s
+
+
+def decolon(s):
+    """
+    Remove an optional : prefix
+    """
+    return s[1:] if s[0:1] == ':' else s

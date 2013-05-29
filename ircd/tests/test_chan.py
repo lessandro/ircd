@@ -96,3 +96,32 @@ def test_multiple(k1):
     msg('PRIVMSG #a :oi')
     msg('PRIVMSG #b :oi')
     assert pop() is None
+
+
+def test_topic(k1):
+    msg('JOIN #a')
+    popall()
+
+    msg('TOPIC #b')
+    assert code() == '403'  # no such channel
+
+    msg('TOPIC #a')
+    assert code() == '331'  # no topic set
+
+    msg('TOPIC #a abc def')
+    assert pop() == 'test:__1 :test1!test1@::1 TOPIC #a :abc def\r\n'
+
+    msg('TOPIC #a')
+    assert pop() == 'test:__1 :testserver 332 test1 #a :abc def\r\n'
+
+    msg('TOPIC #a :')
+    assert pop() == 'test:__1 :test1!test1@::1 TOPIC #a :\r\n'
+
+    msg('MODE #a -o test1')
+    pop()
+
+    msg('TOPIC #a')
+    assert code() == '331'
+
+    msg('topic #a :asd')
+    assert code() == '482'
