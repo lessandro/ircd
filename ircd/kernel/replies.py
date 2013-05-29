@@ -1,5 +1,5 @@
 replies = {
-    'RPL_WELCOME': ('001', 'Welcome'),
+    'RPL_WELCOME': ('001', 'Welcome to the Internet Relay Network'),
     'RPL_MYINFO': ('004', 'ircd 0.1 i ov'),
     'RPL_ISUPPORT': ('005', 'PREFIX=(ov)@+ CHANTYPES=# CHARSET=UTF-8 ' +
                             ':are supported by this server'),

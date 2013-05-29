@@ -141,6 +141,7 @@ class Kernel(object):
 
     def send(self, tags, message):
         message = message.strip()
+        logging.debug('send %s' % message)
 
         if type(tags) in [str, unicode]:
             prefix = _prefix(tags)
