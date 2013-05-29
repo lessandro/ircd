@@ -64,3 +64,36 @@ def test_notice(k1):
 
     msg('NOTICE test2 hello')
     assert pop() == 'test:__2 :test1!test1@::1 NOTICE test2 :hello\r\n'
+
+
+def test_moderated(k1):
+    user(2)
+
+    msg('JOIN #a')
+    msg('JOIN #a', 2)
+    msg('MODE #a +m')
+    popall()
+
+    msg('PRIVMSG #a :test test')
+    assert code() == 'PRIVMSG'
+
+    msg('PRIVMSG #a :test test', 2)
+    assert code() == '404'
+
+    msg('MODE #a +v test2')
+    assert code() == 'MODE'
+
+    msg('PRIVMSG #a :test test', 2)
+    assert code() == 'PRIVMSG'
+
+    msg('MODE #a -v test2')
+    assert code() == 'MODE'
+
+    msg('PRIVMSG #a :test test', 2)
+    assert code() == '404'
+
+    msg('MODE #a -o test1')
+    pop()
+
+    msg('PRIVMSG #a :test test')
+    assert code() == '404'
