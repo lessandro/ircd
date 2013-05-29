@@ -2,4 +2,4 @@
 
 cd $(dirname $0)/..
 
-py.test --cov ircd/kernel
+py.test --cov ircd/kernel --cov ircd/common
