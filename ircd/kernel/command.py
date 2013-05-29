@@ -31,6 +31,12 @@ def validate(name, server, user, args, params):
             server.send_reply(user, 'ERR_NOTONCHANNEL', chan_name)
             return False
 
+    if 'chanop' in params:
+        own_data = server.chan_nick(chan, user['nick'])
+        if not own_data or 'o' not in own_data['modes']:
+            server.send_reply(user, 'ERR_CHANOPRIVSNEEDED', chan['name'])
+            return False
+
     return True
 
 
