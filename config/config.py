@@ -5,6 +5,7 @@ config_path = os.path.normpath(os.path.dirname(__file__))
 # ircd config
 
 server_name = 'lessandro.com'
+ping_timeout = 999999999
 
 # socket server
 

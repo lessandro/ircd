@@ -1,6 +1,7 @@
 import collections
 import msgpack as json
 import logging
+import time
 import command
 import redis
 import replies
@@ -19,6 +20,8 @@ class Kernel(object):
         command.load_commands()
         self.redis = redis.StrictRedis(db=config.redis_db)
 
+        self.init_timeout(config.ping_timeout)
+
     def loop(self):
         """
         Infinite get message/process message loop
@@ -28,9 +31,12 @@ class Kernel(object):
         logging.info('IRCd started')
 
         while self.running:
-            _, self.message = self.redis.blpop('mq:kernel')
-            self.process_message(self.message)
-            self.message = None
+            self.check_timeout()
+            ret = self.redis.blpop('mq:kernel', 1)
+            if ret:
+                _, self.message = ret
+                self.process_message(self.message)
+                self.message = None
 
     def stop(self):
         """
@@ -50,6 +56,53 @@ class Kernel(object):
             # blocked in redis.blpop(), in this case just exit
             import sys
             sys.exit(0)
+
+    def init_timeout(self, ping_timeout):
+        self.ping_timeout = ping_timeout
+        self.timeout_queue = collections.deque()
+        self.timeout_hash = {}
+
+        # track all connected users
+        keys = self.redis.keys('user:*')
+        for key in keys:
+            tag = key.split(':', 1)[1]
+            self.update_timeout(tag)
+
+    def check_timeout(self):
+        now = time.time()
+
+        while self.timeout_queue:
+            tag, ctime = self.timeout_queue[0]
+
+            if now - ctime < self.ping_timeout:
+                break
+
+            self.timeout_queue.popleft()
+
+            if tag not in self.timeout_hash:
+                continue
+
+            last_message, sent_ping = self.timeout_hash[tag]
+
+            if now - last_message >= 2 * self.ping_timeout:
+                if sent_ping:
+                    self.disconnect({'tag': tag})
+                    continue
+
+            if now - last_message >= self.ping_timeout:
+                if not sent_ping:
+                    self.send(tag, 'PING :%s' % self.name)
+                    self.timeout_queue.append((tag, now))
+                    self.timeout_hash[tag] = (last_message, True)
+
+    def update_timeout(self, tag):
+        now = time.time()
+        self.timeout_queue.append((tag, now))
+        self.timeout_hash[tag] = (now, False)
+
+    def remove_timeout(self, tag):
+        if tag in self.timeout_hash:
+            del self.timeout_hash[tag]
 
     def process_message(self, message):
         kind, origin, data = message.split(' ', 2)
@@ -72,6 +125,8 @@ class Kernel(object):
     def user_message(self, tag, message):
         logging.debug('message %s %s', tag, message)
 
+        self.update_timeout(tag)
+
         user = self.load_user(tag)
         if not user:
             logging.error('user %s not found' % tag)
@@ -88,6 +143,8 @@ class Kernel(object):
     def user_connect(self, tag, address):
         logging.debug('connect %s %s', tag, address)
 
+        self.update_timeout(tag)
+
         user = {
             'ip': address,
             'tag': tag,
@@ -100,6 +157,8 @@ class Kernel(object):
 
     def user_disconnect(self, tag, reason):
         logging.debug('disconnect %s %s', tag, reason)
+
+        self.remove_timeout(tag)
 
         user = self.load_user(tag)
         if not user:

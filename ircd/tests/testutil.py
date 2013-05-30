@@ -8,6 +8,7 @@ k = None
 
 class Config(object):
     server_name = 'testserver'
+    ping_timeout = 9999999
     redis_db = 1
 
 

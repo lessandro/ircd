@@ -7,5 +7,10 @@ def cmd_ping(server, user, args):
 
 
 @command
+def cmd_pong(server, user, args):
+    pass
+
+
+@command
 def cmd_quit(server, user, message):
     server.disconnect(user)
