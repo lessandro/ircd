@@ -29,7 +29,9 @@ for lib in [cPickle, json, simplejson, cjson, ujson, msgpack, marshal]:
 
     with timer:
         for i in xrange(n):
-            lib.dumps(data)
+            serialized = lib.dumps(data)
+
+    print '  size', len(serialized)
 
     print '  dumps', n / timer.duration()
 
