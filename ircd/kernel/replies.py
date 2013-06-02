@@ -26,5 +26,6 @@ replies = {
 
     'ERR_ALREADYONCHANNEL': ('901', '%s :You\'re already on that channel'),
     'ERR_ERRONEOUSUSERNAME': ('902', '%s :Erroneous username'),
-    'ERR_NONUTF8': ('903', ':Non UTF-8 message')
+    'ERR_NONUTF8': ('903', ':Non UTF-8 message'),
+    'ERR_AUTHERROR': ('904', ':Authentication error (%s)'),
 }

@@ -7,6 +7,8 @@ config_path = os.path.normpath(os.path.dirname(__file__))
 server_name = 'lessandro.com'
 ping_timeout = 999999999
 
+hmac_key = 'secret'
+
 # socket server
 
 tcp_port = 5556

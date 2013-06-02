@@ -13,6 +13,7 @@ def _prefix(tag):
 
 class Kernel(object):
     def __init__(self, config):
+        self.config = config
         self.running = True
         self.message = None
         self.name = config.server_name
