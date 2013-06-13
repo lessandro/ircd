@@ -92,7 +92,7 @@ def test_moderated(k1):
     msg('PRIVMSG #a :test test', 2)
     assert code() == '404'
 
-    msg('MODE #a -o test1')
+    msg('MODE #a -q test1')
     pop()
 
     msg('PRIVMSG #a :test test')

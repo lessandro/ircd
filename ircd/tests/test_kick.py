@@ -22,7 +22,18 @@ def test_kick(k1):
     assert code() == 'KICK'
 
     msg('JOIN #a')
-    msg('MODE #a -o test1')
+    msg('MODE #a -q test1')
     popall()
     msg('KICK #a test1')
     assert code() == '482'  # not op
+
+
+def test_kick_owner(k1):
+    user(2)
+    msg('JOIN #a')
+    msg('JOIN #a', 2)
+    msg('MODE #a +o test2')
+    popall()
+
+    msg('KICK #a test1', 2)
+    assert code() == '482'

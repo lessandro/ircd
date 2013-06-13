@@ -3,6 +3,16 @@ from ..common.util import split
 commands = {}
 
 
+def is_op(user_data):
+    if not user_data:
+        return False
+
+    has_q = 'q' in user_data['modes']
+    has_o = 'o' in user_data['modes']
+
+    return has_q or has_o
+
+
 def validate(name, server, user, args, params):
     if 'chan' in params:
         params['auth'] = True
@@ -29,12 +39,6 @@ def validate(name, server, user, args, params):
 
         if not server.user_in_chan(user, chan):
             server.send_reply(user, 'ERR_NOTONCHANNEL', chan_name)
-            return False
-
-    if 'chanop' in params:
-        own_data = server.chan_nick(chan, user['nick'])
-        if not own_data or 'o' not in own_data['modes']:
-            server.send_reply(user, 'ERR_CHANOPRIVSNEEDED', chan['name'])
             return False
 
     return True

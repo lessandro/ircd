@@ -1,4 +1,4 @@
-from command import command
+from command import command, is_op
 from ..common.util import split
 
 
@@ -14,7 +14,7 @@ def mode_chan(server, user, target, args):
         return
 
     user_data = server.chan_nick(chan, user['nick'])
-    if not user_data or 'o' not in user_data['modes']:
+    if not is_op(user_data):
         server.send_reply(user, 'ERR_CHANOPRIVSNEEDED', chan['name'])
         return
 
@@ -26,11 +26,15 @@ def mode_chan(server, user, target, args):
             adding = c == '+'
 
         # op/voice
-        elif c in 'ov':
+        elif c in 'qov':
             target, rest = split(rest, 1)
 
             if not target:
                 # no target supplied
+                continue
+
+            # only owners are allowed to +q/-q
+            if c == 'q' and 'q' not in user_data['modes']:
                 continue
 
             target_data = server.chan_nick(chan, target)

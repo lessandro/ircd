@@ -46,7 +46,7 @@ def test_mode_chan(k1):
     pop()  # JOIN
     pop()  # topic
     names = pop().strip().split(':')[3].split(' ')
-    assert '@test1' in names
+    assert '.test1' in names
     assert '+test2' in names
     assert 'test3' in names
     pop()  # end of names
@@ -56,6 +56,28 @@ def test_mode_chan(k1):
     assert code() == 'MODE'
     assert code() == 'MODE'
     assert not pop()  # no target supplied for last +v
+
+
+def test_mode_owner(k1):
+    msg('JOIN #a')
+    msg('MODE #a +ov test1 test1')
+    popall()
+
+    user(2)
+    msg('JOIN #a', 2)
+    pop()
+    pop()
+    assert pop() == 'test:__2 :testserver 353 test2 = #a :.@+test1 test2\r\n'
+    pop()
+
+    msg('MODE #a +o test2')
+    popall()
+
+    msg('MODE #a -q test1', 2)
+    assert not pop()
+
+    msg('MODE #a -o test1', 2)
+    assert code() == 'MODE'
 
 
 def test_mode_chan2(k1):

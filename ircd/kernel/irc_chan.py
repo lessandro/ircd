@@ -1,5 +1,5 @@
 import re
-from command import command
+from command import command, is_op
 from ..common.util import decolon
 
 chan_re = re.compile(r'^#\w+$')
@@ -16,7 +16,7 @@ def join_chan(server, user, chan_name):
         return
 
     data = {
-        'modes': 'o' if created else '',
+        'modes': 'q' if created else '',
         'tag': user['tag']
     }
     server.join_chan(user, chan, data)
@@ -35,6 +35,8 @@ def cmd_join(server, user, chanlist):
 
 def map_mode(mode):
     symbol = ''
+    if 'q' in mode:
+        symbol += '.'
     if 'o' in mode:
         symbol += '@'
     if 'v' in mode:
@@ -76,8 +78,8 @@ def cmd_topic(server, user, chan, topic):
         send_topic(server, user, chan)
         return
 
-    own_data = server.chan_nick(chan, user['nick'])
-    if not own_data or 'o' not in own_data['modes']:
+    user_data = server.chan_nick(chan, user['nick'])
+    if not is_op(user_data):
         server.send_reply(user, 'ERR_CHANOPRIVSNEEDED', chan['name'])
         return
 

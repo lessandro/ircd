@@ -1,4 +1,4 @@
-from command import command
+from command import command, is_op
 from ..common.util import colon
 
 
@@ -20,7 +20,7 @@ def send_message(kind, server, user, target, message):
 
         if 'm' in chan['modes']:
             modes = user_data['modes']
-            can_talk = 'o' in modes or 'v' in modes
+            can_talk = is_op(user_data) or 'v' in modes
             if not can_talk:
                 server.send_reply(user, 'ERR_CANNOTSENDTOCHAN', chan['name'])
                 return

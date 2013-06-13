@@ -84,7 +84,7 @@ def test_names(k1):
     _, serv, code_, equal, nick, chan, nicks = pop().split(' ', 6)
     assert code_ == '353'
     nicks = nicks[1:].split()
-    assert '@test1' in nicks
+    assert '.test1' in nicks
     assert 'test2' in nicks
     assert code() == '366'
 
@@ -117,7 +117,7 @@ def test_topic(k1):
     msg('TOPIC #a :')
     assert pop() == 'test:__1 :test1!test1@::1 TOPIC #a :\r\n'
 
-    msg('MODE #a -o test1')
+    msg('MODE #a -q test1')
     pop()
 
     msg('TOPIC #a')
