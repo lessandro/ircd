@@ -98,7 +98,7 @@ def cmd_auth(server, user, hex_data, hex_digest):
 
 
 @command
-def cmd_auth2(server, user, username, nick):
+def cmd_login(server, user, username, nick):
     data = {
         'username': username,
         'nick': nick,
@@ -107,7 +107,7 @@ def cmd_auth2(server, user, username, nick):
 
     hex_data = msgpack.dumps(data).encode('hex')
     h = hmac.new(server.config.hmac_key, hex_data, hashlib.sha256)
-    server.send(user['tag'], 'AUTH %s %s' % (hex_data, h.hexdigest()))
+    command.dispatch(server, user, 'AUTH %s %s' % (hex_data, h.hexdigest()))
 
 
 def check_auth(server, user):
