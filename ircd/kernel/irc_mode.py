@@ -8,11 +8,19 @@ def mode_chan(server, user, target, args):
         server.send_reply(user, 'ERR_NOSUCHCHANNEL', target)
         return
 
+    # parameterless mode: show current modes
     if not args:
         server.send_reply(user, 'RPL_CHANNELMODEIS',
                           chan['name'], chan['modes'])
         return
 
+    # special case for banlist
+    if args == 'b' or args == '+b':
+        # users should use ACCESS instead
+        server.send_reply(user, 'RPL_ENDOFBANLIST', chan['name'])
+        return
+
+    # all modes require op status
     user_data = server.chan_nick(chan, user['nick'])
     if not is_op(user_data):
         server.send_reply(user, 'ERR_CHANOPRIVSNEEDED', chan['name'])

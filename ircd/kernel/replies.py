@@ -9,6 +9,7 @@ replies = {
     'RPL_TOPIC': ('332', '%s :%s'),
     'RPL_NAMREPLY': ('353', '= %s :%s'),
     'RPL_ENDOFNAMES': ('366', '%s :End of NAMES list'),
+    'RPL_ENDOFBANLIST': ('368', '%s :End of Channel Ban List'),
 
     'ERR_NOSUCHNICK': ('401', '%s :No such nick'),
     'ERR_NOSUCHCHANNEL': ('403', '%s :No such channel'),
