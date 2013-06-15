@@ -86,3 +86,15 @@ def cmd_topic(server, user, chan, topic):
     chan['topic'] = decolon(topic)
     server.save_chan(chan)
     server.send_chan(user, 'TOPIC', chan, ':%s' % chan['topic'])
+
+
+@command(chan=True)
+def cmd_who(server, user, chan):
+    for nick, data in server.chan_nicks(chan):
+        target = server.load_user(data['tag'])
+        server.send_reply(
+            user, 'RPL_WHOREPLY', chan['name'], target['username'],
+            target['ip'], server.name, target['nick'], 'H',
+            map_mode(data['modes']) or '*', '0', '*')
+
+    server.send_reply(user, 'RPL_ENDOFWHO', chan['name'])

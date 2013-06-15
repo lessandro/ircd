@@ -4,9 +4,11 @@ replies = {
     'RPL_ISUPPORT': ('005', 'PREFIX=(qov).@+ CHANTYPES=# CHARSET=UTF-8 ' +
                             ':are supported by this server'),
 
+    'RPL_ENDOFWHO': ('315', '%s :End of /WHO list'),
     'RPL_CHANNELMODEIS': ('324', '%s +%s'),
     'RPL_NOTOPIC': ('331', '%s :No topic is set'),
     'RPL_TOPIC': ('332', '%s :%s'),
+    'RPL_WHOREPLY': ('352', '%s %s %s %s %s %s%s :%s %s'),
     'RPL_NAMREPLY': ('353', '= %s :%s'),
     'RPL_ENDOFNAMES': ('366', '%s :End of NAMES list'),
     'RPL_ENDOFBANLIST': ('368', '%s :End of Channel Ban List'),
