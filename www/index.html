@@ -48,6 +48,9 @@
 
         s.on('message', function(data) {
             show("<<< " + data);
+            var split = data.split(' ');
+            if (split && split[0] == 'PING')
+                send('PONG ' + split[1]);
         });
 
         s.on('disconnect', function() {
