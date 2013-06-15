@@ -14,3 +14,8 @@ def test_quit(k1):
 def test_unknown(k1):
     msg("UNKNOWNCOMMAND a b c")
     assert code() == '421'  # unknown command
+
+
+def test_pong(k1):
+    msg('PONG :asd')
+    assert not pop()

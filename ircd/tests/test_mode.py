@@ -101,3 +101,14 @@ def test_mode_chan2(k1):
 
     msg('MODE #a')
     assert pop() == 'test:__1 :testserver 324 test1 #a +\r\n'
+
+
+def test_banlist(k1):
+    msg('JOIN #a')
+    popall()
+
+    msg('MODE #a b')
+    assert code() == '368'  # end of banlist
+
+    msg('MODE #a +b')
+    assert code() == '368'  # end of banlist

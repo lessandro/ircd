@@ -121,7 +121,16 @@ def test_topic(k1):
     pop()
 
     msg('TOPIC #a')
-    assert code() == '331'
+    assert code() == '331'  # no topic set
 
     msg('topic #a :asd')
-    assert code() == '482'
+    assert code() == '482'  # not op
+
+
+def test_who(k1):
+    msg('JOIN #a')
+    popall()
+
+    msg('WHO #a')
+    assert code() == '352'  # who reply
+    assert code() == '315'  # end of who
