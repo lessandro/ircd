@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
     <style type="text/css">
         body {
             font-family: monospace;
@@ -20,12 +20,9 @@
     </style>
     <script>
     $(function() {
-        var url = 'http://localhost:8001';
-        //var url = 'http://lessandro.com:8001';
+        var url = 'http://' + window.location.hostname + ':8002/sjs';
 
-        var s = new io.connect(url, {
-            rememberTransport: false
-        });
+        var s = new SockJS(url);
 
         function show(text) {
             var $d = $("<div>");
@@ -39,23 +36,23 @@
             s.send(data + "\r\n");
         }
 
-        s.on('connect', function() {
+        s.onopen = function() {
             show('* connected')
             send('NICK zxc' + ((Math.random() * 10000) | 0));
             send('USER zxc zxc zxc zxc');
             send('JOIN #a');
-        });
+        };
 
-        s.on('message', function(data) {
-            show("<<< " + data);
-            var split = data.split(' ');
+        s.onmessage = function(e) {
+            show("<<< " + e.data);
+            var split = e.data.split(' ');
             if (split && split[0] == 'PING')
                 send('PONG ' + split[1]);
-        });
+        };
 
-        s.on('disconnect', function() {
+        s.onclose = function() {
             show("* disconnected");
-        })
+        };
 
         $('#chatform').submit(function() {
             send($('#chatform [type=text]').val());
@@ -64,7 +61,7 @@
         });
 
         $(window).unload(function() {
-            s.disconnect();
+            s.close();
         });
     });
     </script>
