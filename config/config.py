@@ -13,13 +13,6 @@ hmac_key = 'secret'
 
 tcp_port = 5556
 
-# socket.io server
-
-socketio_port = 8001
-
-flash_policy_port = 10843
-flash_policy_file = os.path.join(config_path, 'policy.xml')
-
 # sockjs server
 
 sockjs_port = 8002
