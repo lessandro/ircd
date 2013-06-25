@@ -25,6 +25,10 @@ def main(server_types, config):
         import sioserver
         servers.append(sioserver.SioServer(config))
 
+    if 'sjs' in server_types:
+        import sjsserver
+        servers.append(sjsserver.SjsServer(config))
+
     signal.signal(signal.SIGTERM, sig_handler)
     signal.signal(signal.SIGINT, sig_handler)
 
