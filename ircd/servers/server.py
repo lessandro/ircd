@@ -48,6 +48,7 @@ class Server(object):
             buf.append(data[:index])
             data = data[index + 1:]
             message, buf[:] = ''.join(buf).strip(), []
+            message = message.replace("\r", "")
             if message:
                 self.mq.send('message %s %s' % (tag, message))
 
