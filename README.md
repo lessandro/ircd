@@ -4,18 +4,14 @@ A hot-swappable, non-compliant IRCd.
 
 ## Architecture
 
-       tornado                                    blocking
-      endpoints                 redis              server
-    
-    
-    +-----------+           +-----------+
-    |  sockjs   | <---+     |           |       +----------+
-    +-----------+     |     | chan/user | <---> |  server  |
-                      |     |   data    |       +----------+
-                      |     |           |            ^
-    +-----------+     |---> | blpop mq  | <----------+
-    | tcp(6667) | <---+     |           |
-    +-----------+           +-----------+
+       tornado                                        irc
+      endpoints                  redis               server
+    +-----------+           +-------------+       +----------+
+    |  sockjs   | <---+---> |  blpop mq   | <---> |  server  |
+    +-----------+     |     |             |       +----------+
+    +-----------+     |     |  chan/user  |            ^
+    | tcp(6667) | <---+     |    data     | <----------+
+    +-----------+           +-------------+
 
 ## Dependencies
 
