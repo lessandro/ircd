@@ -2,6 +2,21 @@
 
 A hot-swappable, non-compliant IRCd.
 
+## Architecture
+
+       tornado                                    blocking
+      endpoints                 redis              server
+    
+    
+    +-----------+           +-----------+
+    |  sockjs   | <---+     |           |       +----------+
+    +-----------+     |     | chan/user | <---> |  server  |
+                      |     |   data    |       +----------+
+                      |     |           |            ^
+    +-----------+     |---> | blpop mq  | <----------+
+    | tcp(6667) | <---+     |           |
+    +-----------+           +-----------+
+
 ## Dependencies
 
     redis-server
