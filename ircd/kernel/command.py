@@ -7,10 +7,18 @@ def is_op(user_data):
     if not user_data:
         return False
 
-    has_q = 'q' in user_data['modes']
     has_o = 'o' in user_data['modes']
 
-    return has_q or has_o
+    return has_o or is_owner(user_data)
+
+
+def is_owner(user_data):
+    if not user_data:
+        return False
+
+    has_q = 'q' in user_data['modes']
+
+    return has_q
 
 
 def validate(name, server, user, args, params):

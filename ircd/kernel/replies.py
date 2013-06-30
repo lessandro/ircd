@@ -27,6 +27,12 @@ replies = {
     'ERR_BADCHANNAME': ('479', '%s :Illegal channel name'),
     'ERR_CHANOPRIVSNEEDED': ('482', '%s :You\'re not channel operator'),
 
+    'RPL_ACCESSADD': ('801', '%s %s %s %s %s :%s'),
+    'RPL_ACCESSDELETE': ('802', '%s %s %s'),
+    'RPL_ACCESSSTART': ('803', '%s :Start of access entries'),
+    'RPL_ACCESSLIST': ('804', '%s %s %s %s %s :%s'),
+    'RPL_ACCESSEND': ('805', '%s :End of access entries'),
+
     'ERR_ALREADYONCHANNEL': ('901', '%s :You\'re already on that channel'),
     'ERR_ERRONEOUSUSERNAME': ('902', '%s :Erroneous username'),
     'ERR_NONUTF8': ('903', ':Non UTF-8 message'),

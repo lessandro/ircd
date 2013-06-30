@@ -5,6 +5,7 @@ import timeout
 import command
 import redis
 import replies
+from ..common.util import split
 
 
 def _prefix(tag):
@@ -262,3 +263,20 @@ class Kernel(object):
 
     def find_nick(self, nick):
         return self.redis.smembers('nick-users:' + nick)
+
+    def access_list_all(self, chan):
+        acl_dict = self.redis.hgetall('chan-access:' + chan['name'])
+        for key, value in acl_dict.iteritems():
+            level, mask = key.split()
+            timeout, user, reason = split(value, 2)
+            timeout = int(timeout)
+            yield (level, mask, timeout, user, reason)
+
+    def access_list_add(self, chan, level, mask, timeout, user, reason):
+        key = '%s %s' % (level, mask)
+        value = '%d %s %s' % (timeout, user['id'], reason)
+        self.redis.hset('chan-access:' + chan['name'], key, value)
+
+    def access_list_del(self, chan, level, mask):
+        key = '%s %s' % (level, mask)
+        self.redis.hdel('chan-access:' + chan['name'], key)
