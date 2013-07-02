@@ -1,8 +1,16 @@
 from command import command, is_op, is_owner
 from ..common.util import decolon
 import time
+import fnmatch
 
-levels = ['DENY', 'GRANT', 'VOICE', 'HOST', 'OWNER', '']
+levels = {
+    '': (0, ''),
+    'DENY': (1, 'b'),
+    'GRANT': (2, ''),
+    'VOICE': (3, 'v'),
+    'HOST': (4, 'o'),
+    'OWNER': (5, 'q')
+}
 
 
 @command(chan=True)
@@ -44,7 +52,7 @@ def cmd_access(server, user, chan, action, level, mask, timeout, reason):
         server.send_reply(user, 'RPL_ACCESSDELETE', chan['name'], level, mask)
 
     elif action == 'CLEAR':
-        for level_, mask, timeout, _, _ in get_access_list(server, chan):
+        for level_, mask, _, _, _ in get_access_list(server, chan):
             if level and level != level_:
                 continue
             if level_ == 'OWNER' and not is_owner_:
@@ -81,7 +89,7 @@ def parse_mask(mask):
             parts[cur] += c
 
     parts = [part or '*' for part in parts]
-    return '{0}!{1}@{2}${3}'.format(*parts)
+    return '{0}!{1}@{2}'.format(*parts)
 
 
 def parse_timeout(timeout):
@@ -106,3 +114,15 @@ def get_access_list(server, chan):
             server.access_list_del(chan, level, mask)
         else:
             yield entry
+
+
+def check_user_access(server, chan, user):
+    acl = get_access_list(server, chan)
+    best_level = levels['']
+
+    for level, mask, _, _, _ in acl:
+        if fnmatch.fnmatch(user['id'], mask):
+            if levels[level] > best_level:
+                best_level = levels[level]
+
+    return best_level[1]

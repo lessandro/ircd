@@ -24,6 +24,7 @@ replies = {
     'ERR_NEEDMOREPARAMS': ('461', '%s :Not enough parameters'),
     'ERR_ALREADYREGISTRED': ('462', ':Already registered'),
     'ERR_UNKNOWNMODE': ('472', '%s :is an unknown mode char to me'),
+    'ERR_BANNEDFROMCHAN': ('474', '%s :Cannot join channel (+b)'),
     'ERR_BADCHANNAME': ('479', '%s :Illegal channel name'),
     'ERR_CHANOPRIVSNEEDED': ('482', '%s :You\'re not channel operator'),
 

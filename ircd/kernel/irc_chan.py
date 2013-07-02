@@ -1,6 +1,7 @@
 import re
 from command import command, is_op
 from ..common.util import decolon
+import irc_access
 
 chan_re = re.compile(r'^#\w+$')
 
@@ -15,12 +16,25 @@ def join_chan(server, user, chan_name):
         server.send_reply(user, 'ERR_ALREADYONCHANNEL', chan_name)
         return
 
+    if created:
+        server.access_list_add(chan, 'OWNER', user['id'], 0, user, '')
+
+    mode = irc_access.check_user_access(server, chan, user)
+    if mode == 'b':
+        server.send_reply(user, 'ERR_BANNEDFROMCHAN', chan_name)
+        return
+
     data = {
-        'modes': 'q' if created else '',
+        'modes': mode,
         'tag': user['tag']
     }
     server.join_chan(user, chan, data)
     server.send_chan(user, 'JOIN', chan)
+
+    if mode:
+        server.send_chan(
+            user, 'MODE', chan, '+%s %s' % (mode, user['nick']),
+            others_only=True)
 
     send_topic(server, user, chan)
     send_names(server, user, chan)
