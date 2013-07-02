@@ -27,7 +27,7 @@ def test_auth_fail(k0):
     assert code() == '462'  # already registered
 
     k0.process_message('message test:__1 USER !')
-    assert code() == '902'  # invalid username
+    assert code() == '997'  # invalid username
 
     k0.process_message('message test:__1 USER test')
     assert code() == '001'

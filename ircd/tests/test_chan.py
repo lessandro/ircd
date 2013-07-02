@@ -23,7 +23,7 @@ def test_join2(k1):
     assert code() == '366'
 
     msg('JOIN #a')
-    assert code() == '901'  # already joined
+    assert code() == '927'  # already joined
 
 
 def test_join3(k1):
@@ -37,7 +37,7 @@ def test_join3(k1):
     popall()
 
     msg('JOIN #a', 2)
-    assert code() == '901'  # already joined
+    assert code() == '927'  # already joined
 
 
 def test_part1(k1):

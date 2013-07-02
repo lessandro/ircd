@@ -72,13 +72,15 @@ def cmd_auth(server, user, hex_data, hex_digest):
     try:
         h = hmac.new(server.config.hmac_key, hex_data, hashlib.sha256)
         if hex_digest != h.hexdigest():
-            server.send_reply(user, 'ERR_AUTHERROR', 'digest mismatch')
+            server.send_reply(
+                user, 'ERR_AUTHENTICATIONFAILED', 'digest mismatch')
             return
 
         data = msgpack.loads(hex_data.decode('hex'))
 
         if data['expires'] < time.time():
-            server.send_reply(user, 'ERR_AUTHERROR', 'expired token')
+            server.send_reply(
+                user, 'ERR_AUTHENTICATIONFAILED', 'expired token')
             return
 
         nick = validate_nick(server, user, data['nick'])
@@ -93,7 +95,7 @@ def cmd_auth(server, user, hex_data, hex_digest):
         check_auth(server, user)
 
     except:
-        server.send_reply(user, 'ERR_AUTHERROR', 'malformed data')
+        server.send_reply(user, 'ERR_AUTHENTICATIONFAILED', 'malformed data')
         return
 
 

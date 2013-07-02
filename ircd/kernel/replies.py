@@ -33,8 +33,9 @@ replies = {
     'RPL_ACCESSLIST': ('804', '%s %s %s %s %s :%s'),
     'RPL_ACCESSEND': ('805', '%s :End of access entries'),
 
-    'ERR_ALREADYONCHANNEL': ('901', '%s :You\'re already on that channel'),
-    'ERR_ERRONEOUSUSERNAME': ('902', '%s :Erroneous username'),
-    'ERR_NONUTF8': ('903', ':Non UTF-8 message'),
-    'ERR_AUTHERROR': ('904', ':Authentication error (%s)'),
+    'ERR_AUTHENTICATIONFAILED': ('910', ':Authentication failed (%s)'),
+    'ERR_ALREADYONCHANNEL': ('927', '%s :Already in the channel'),
+
+    'ERR_ERRONEOUSUSERNAME': ('997', '%s :Erroneous username'),
+    'ERR_NONUTF8': ('998', ':Non UTF-8 message'),
 }

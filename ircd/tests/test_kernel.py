@@ -11,7 +11,7 @@ def test_reset(k1):
 
 def test_utf8(k1):
     msg('PING \xAA\xAA\xAA\xAA\xAA\xAA\xAA\xAA')
-    assert code() == '903'  # invalid utf8
+    assert code() == '998'  # invalid utf8
 
 
 def test_nouser(k0):
