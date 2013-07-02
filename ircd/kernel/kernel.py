@@ -253,6 +253,7 @@ class Kernel(object):
         self.redis.hset('chan-nicks:' + chan['name'], nick, serialized)
 
     def destroy_chan(self, chan):
+        self.redis.delete('chan-access:' + chan['name'])
         self.redis.delete('chan:' + chan['name'])
 
     def register_nick(self, user):
