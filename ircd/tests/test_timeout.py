@@ -2,10 +2,6 @@ import time
 from testutil import *
 
 
-def set_time(t):
-    time.time = lambda: t
-
-
 def test_timeout():
     old_time = time.time
     set_time(0)

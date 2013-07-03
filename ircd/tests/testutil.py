@@ -1,5 +1,6 @@
 import pytest
 import redis
+import time
 from ircd.kernel.kernel import Kernel
 
 r = redis.StrictRedis(db=1)
@@ -54,3 +55,7 @@ def popall():
 def code(reply=None):
     reply = reply or pop()
     return reply and reply.split(' ', 3)[2]
+
+
+def set_time(t):
+    time.time = lambda: t
