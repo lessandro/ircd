@@ -24,16 +24,19 @@ def cmd_access(server, user, chan, action, level, mask, timeout, reason):
     level = level.upper()
 
     if level not in levels:
+        server.send_reply(user, 'ERR_BADLEVEL', 'ACCESS')
         return
 
     is_owner_ = is_owner(user_data)
 
     if action in ['ADD', 'DELETE', 'CLEAR']:
         if level == 'OWNER' and not is_owner_:
+            server.send_reply(user, 'ERR_NOACCESS', 'ACCESS')
             return
 
     if action == 'ADD':
         if not mask:
+            server.send_reply(user, 'ERR_NEEDMOREPARAMS', 'ACCESS')
             return
 
         mask = parse_mask(mask)
@@ -60,6 +63,8 @@ def cmd_access(server, user, chan, action, level, mask, timeout, reason):
 
             server.access_list_del(chan, level_, mask)
 
+        server.send_reply(user, 'RPL_ACCESSCLEAR', chan['name'], level)
+
     elif action == 'LIST':
         server.send_reply(user, 'RPL_ACCESSSTART', chan['name'])
 
@@ -74,6 +79,10 @@ def cmd_access(server, user, chan, action, level, mask, timeout, reason):
                               mask, timeout, userid, reason)
 
         server.send_reply(user, 'RPL_ACCESSEND', chan['name'])
+
+    else:
+        server.send_reply(user, 'ERR_BADCOMMAND', 'ACCESS')
+        return
 
 
 def parse_mask(mask):

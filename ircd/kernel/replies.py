@@ -33,8 +33,12 @@ replies = {
     'RPL_ACCESSSTART': ('803', '%s :Start of access entries'),
     'RPL_ACCESSLIST': ('804', '%s %s %s %s %s :%s'),
     'RPL_ACCESSEND': ('805', '%s :End of access entries'),
+    'RPL_ACCESSCLEAR': ('820', '%s %s :Clear'),
 
+    'ERR_BADCOMMAND': ('900', '%s :Bad command'),
+    'ERR_BADLEVEL': ('903', '%s :Bad level'),
     'ERR_AUTHENTICATIONFAILED': ('910', ':Authentication failed (%s)'),
+    'ERR_NOACCESS': ('913', '%s :No access'),
     'ERR_ALREADYONCHANNEL': ('927', '%s :Already in the channel'),
 
     'ERR_ERRONEOUSUSERNAME': ('997', '%s :Erroneous username'),
