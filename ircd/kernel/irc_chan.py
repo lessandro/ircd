@@ -29,7 +29,7 @@ def join_chan(server, user, chan_name):
         'tag': user['tag']
     }
     server.join_chan(user, chan, data)
-    server.send_chan(user, 'JOIN', chan)
+    server.send_chan(user, 'JOIN', chan, ':' + user['realname'])
 
     if mode:
         server.send_chan(

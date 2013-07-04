@@ -17,7 +17,7 @@ def test_join1(k0):
 
 def test_join2(k1):
     msg('JOIN #a')
-    assert pop().split()[2:] == ['JOIN', '#a']
+    assert pop().split()[2:] == ['JOIN', '#a', ':real' ,'name']
     assert code() == '331'
     assert code() == '353'
     assert code() == '366'

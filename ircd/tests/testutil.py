@@ -30,7 +30,7 @@ def k1():
 
 def user(n=1):
     raw('connect test:__%d ::%d' % (n, n))
-    msg('USER test%d' % n, n)
+    msg('USER test%d hn sn :real name' % n, n)
     msg('NICK test%d' % n, n)
     popall()
 
