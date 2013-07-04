@@ -4,6 +4,7 @@ import msgpack
 import time
 import re
 from command import command
+from ..common.util import decolon
 
 nick_re = re.compile(ur'^\w{3,}$', re.UNICODE)
 user_re = re.compile(r'^[a-zA-Z0-9_~]+$')
@@ -59,6 +60,7 @@ def cmd_user(server, user, username, hostname, servername, realname):
         return
 
     user['username'] = username
+    user['realname'] = decolon(realname)
     server.save_user(user)
     check_auth(server, user)
 
@@ -85,12 +87,14 @@ def cmd_auth(server, user, hex_data, hex_digest):
 
         nick = validate_nick(server, user, data['nick'])
         username = validate_username(server, user, data['username'])
+        realname = data['realname'] if 'realname' in data else ''
 
         if not nick or not username:
             return
 
         user['nick'] = nick
         user['username'] = username
+        user['realname'] = realname
 
         check_auth(server, user)
 
@@ -100,10 +104,11 @@ def cmd_auth(server, user, hex_data, hex_digest):
 
 
 @command
-def cmd_login(server, user, username, nick):
+def cmd_login(server, user, nick, username, realname):
     data = {
-        'username': username,
         'nick': nick,
+        'username': username,
+        'realname': decolon(realname),
         'expires': time.time() + 60
     }
 
