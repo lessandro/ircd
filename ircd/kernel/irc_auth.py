@@ -3,7 +3,7 @@ import hashlib
 import msgpack
 import time
 import re
-from command import command
+from command import command, dispatch
 from ..common.util import decolon
 
 nick_re = re.compile(ur'^\w{3,}$', re.UNICODE)
@@ -95,43 +95,33 @@ def cmd_auth(server, user, hex_data, hex_digest):
         user['nick'] = nick
         user['username'] = username
         user['realname'] = realname
-
-        check_auth(server, user)
+        user['auth'] = True
+        user['id'] = '%s!%s@%s' % (user['nick'], user['username'], user['ip'])
+        server.save_user(user)
+        server.register_nick(user)
+        server.send_reply(user, 'RPL_WELCOME')
+        server.send_reply(user, 'RPL_MYINFO')
+        server.send_reply(user, 'RPL_ISUPPORT')
 
     except:
         server.send_reply(user, 'ERR_AUTHENTICATIONFAILED', 'malformed data')
         return
 
 
-@command
-def cmd_login(server, user, nick, username, realname):
-    data = {
-        'nick': nick,
-        'username': username,
-        'realname': decolon(realname),
-        'expires': time.time() + 60
-    }
-
-    hex_data = msgpack.dumps(data).encode('hex')
-    h = hmac.new(server.config.hmac_key, hex_data, hashlib.sha256)
-    command.dispatch(server, user, 'AUTH %s %s' % (hex_data, h.hexdigest()))
-
-
 def check_auth(server, user):
-    if 'auth' in user:
-        # this should never be executed
-        return
-
     if 'username' not in user:
         return
 
     if user['nick'] == '*':
         return
 
-    user['auth'] = True
-    user['id'] = '%s!%s@%s' % (user['nick'], user['username'], user['ip'])
-    server.save_user(user)
-    server.register_nick(user)
-    server.send_reply(user, 'RPL_WELCOME')
-    server.send_reply(user, 'RPL_MYINFO')
-    server.send_reply(user, 'RPL_ISUPPORT')
+    data = {
+        'nick': user['nick'],
+        'username': user['username'],
+        'realname': decolon(user['realname']),
+        'expires': time.time() + 60
+    }
+
+    hex_data = msgpack.dumps(data).encode('hex')
+    h = hmac.new(server.config.hmac_key, hex_data, hashlib.sha256)
+    dispatch(server, user, 'AUTH %s %s' % (hex_data, h.hexdigest()))

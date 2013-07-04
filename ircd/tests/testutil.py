@@ -11,6 +11,7 @@ class Config(object):
     server_name = 'testserver'
     ping_timeout = 10
     redis_db = 1
+    hmac_key = 'key'
 
 
 @pytest.fixture
