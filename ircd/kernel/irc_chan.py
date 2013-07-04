@@ -109,6 +109,6 @@ def cmd_who(server, user, chan):
         server.send_reply(
             user, 'RPL_WHOREPLY', chan['name'], target['username'],
             target['ip'], server.name, target['nick'], 'H',
-            map_mode(data['modes']) or '*', '0', '*')
+            map_mode(data['modes']) or '*', '0', target['realname'])
 
     server.send_reply(user, 'RPL_ENDOFWHO', chan['name'])
