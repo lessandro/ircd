@@ -165,6 +165,16 @@ class Kernel(object):
         self.send(user['tag'], ':%s %s %s %s' % (
             self.name, numeric, user['nick'], format % args))
 
+    def send_visible(self, user, reply, *args):
+        numeric, format = replies.replies.get(reply, (reply, '%s'))
+        message = ':%s %s %s' % (user['id'], numeric, format % args)
+        tags = set()
+        for chan_name in self.user_chans(user):
+            chan_tags = self.redis.smembers('chan-users:' + chan_name)
+            tags.update(chan_tags)
+        tags.discard(user['tag'])
+        self.send(tags, message)
+
     def send(self, tags, message):
         message = message.strip()
         logging.debug('send %s' % message)

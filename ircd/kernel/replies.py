@@ -4,6 +4,8 @@ replies = {
     'RPL_ISUPPORT': ('005', 'PREFIX=(qov).@+ CHANTYPES=# CHARSET=UTF-8 ' +
                             ':are supported by this server'),
 
+    'RPL_UNAWAY': ('305', ':You are no longer marked as being away'),
+    'RPL_NOWAWAY': ('306', ':You have been marked as being away'),
     'RPL_ENDOFWHO': ('315', '%s :End of /WHO list'),
     'RPL_CHANNELMODEIS': ('324', '%s +%s'),
     'RPL_NOTOPIC': ('331', '%s :No topic is set'),
@@ -34,6 +36,8 @@ replies = {
     'RPL_ACCESSLIST': ('804', '%s %s %s %s %s :%s'),
     'RPL_ACCESSEND': ('805', '%s :End of access entries'),
     'RPL_ACCESSCLEAR': ('820', '%s %s :Clear'),
+    'RPL_AWAYBROADCAST': ('821', ':%s'),
+    'RPL_UNAWAYBROADCAST': ('822', ':User unaway'),
 
     'ERR_BADCOMMAND': ('900', '%s :Bad command'),
     'ERR_BADLEVEL': ('903', '%s :Bad level'),
