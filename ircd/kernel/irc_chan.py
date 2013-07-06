@@ -29,7 +29,10 @@ def join_chan(server, user, chan_name):
         'tag': user['tag']
     }
     server.join_chan(user, chan, data)
-    server.send_chan(user, 'JOIN', chan, ':' + user['realname'])
+
+    away = 'G' if user.get('away') else 'H'
+    tag = ':%s %s' % (away, user['realname'])
+    server.send_chan(user, 'JOIN', chan, tag)
 
     if mode:
         server.send_chan(
@@ -106,9 +109,13 @@ def cmd_topic(server, user, chan, topic):
 def cmd_who(server, user, chan):
     for nick, data in server.chan_nicks(chan):
         target = server.load_user(data['tag'])
+
+        away = 'G' if user.get('away') else 'H'
+        mode_sym = map_mode(data['modes']) or '*'
+
         server.send_reply(
             user, 'RPL_WHOREPLY', chan['name'], target['username'],
-            target['ip'], server.name, target['nick'], 'H',
-            map_mode(data['modes']) or '*', '0', target['realname'])
+            target['ip'], server.name, target['nick'], away,
+            mode_sym, '0', target['realname'])
 
     server.send_reply(user, 'RPL_ENDOFWHO', chan['name'])
