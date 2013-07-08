@@ -36,8 +36,8 @@ replies = {
     'RPL_ACCESSLIST': ('804', '%s %s %s %s %s :%s'),
     'RPL_ACCESSEND': ('805', '%s :End of access entries'),
     'RPL_ACCESSCLEAR': ('820', '%s %s :Clear'),
-    'RPL_AWAYBROADCAST': ('821', ':%s'),
-    'RPL_UNAWAYBROADCAST': ('822', ':User unaway'),
+    'RPL_UNAWAYBROADCAST': ('821', ':User unaway'),
+    'RPL_AWAYBROADCAST': ('822', ':%s'),
 
     'ERR_BADCOMMAND': ('900', '%s :Bad command'),
     'ERR_BADLEVEL': ('903', '%s :Bad level'),
