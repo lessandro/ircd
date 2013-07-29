@@ -96,6 +96,10 @@ class Kernel(object):
 
         self.timeout.update(tag)
 
+        message = message.strip()
+        if not message:
+            return
+
         user = self.load_user(tag)
         if not user:
             logging.error('user %s not found' % tag)
