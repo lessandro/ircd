@@ -6,6 +6,7 @@ import command
 import redis
 import replies
 from ..common.util import split
+from ..common import stats
 
 
 def _prefix(tag):
@@ -71,6 +72,7 @@ class Kernel(object):
             import sys
             sys.exit(0)
 
+    @stats.timing
     def process_message(self, message):
         kind, origin, data = message.split(' ', 2)
 
