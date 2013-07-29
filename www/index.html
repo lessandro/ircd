@@ -47,7 +47,7 @@
             show("<<< " + e.data);
             var split = e.data.split(' ');
             if (split && split[0] == 'PING')
-                send('PONG ' + split[1]);
+                send('PONG ' + $.trim(split[1]));
         };
 
         s.onclose = function() {
