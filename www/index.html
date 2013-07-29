@@ -20,9 +20,9 @@
     </style>
     <script>
     $(function() {
-        var url = 'http://' + window.location.hostname + ':8002/sjs';
+        var url = 'ws://' + window.location.hostname + ':8888/sjs';
 
-        var s = new SockJS(url);
+        var s = new WebSocket(url);
 
         function show(text) {
             var $d = $("<div>");

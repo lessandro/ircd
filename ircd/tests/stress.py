@@ -4,7 +4,7 @@ import socket
 import random
 import sys
 
-address = ('localhost', 5556)
+address = ('localhost', int(sys.argv[1]))
 
 
 class Client(object):
@@ -46,7 +46,7 @@ class Client(object):
             self.send('PRIVMSG', ch, ':heloooooo nurse')
 
 
-for _ in xrange(int(sys.argv[1])):
+for _ in xrange(int(sys.argv[2])):
     Client()
 
 tornado.ioloop.IOLoop.instance().start()

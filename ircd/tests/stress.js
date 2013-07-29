@@ -6,7 +6,7 @@ var choice = function (a) {
 };
 
 var new_client = function() {
-    var ws = new WebSocket('ws://localhost:8002/sjs/websocket');
+    var ws = new WebSocket('ws://localhost:8888/sjs/websocket');
     var chans = [];
 
     var send = function() {
