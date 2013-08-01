@@ -39,6 +39,10 @@ def cmd_access(server, user, chan, action, level, mask, timeout, reason):
             server.send_reply(user, 'ERR_NEEDMOREPARAMS', 'ACCESS')
             return
 
+        if server.access_list_count(chan) >= server.config.max_acl_entries:
+            server.send_reply(user, 'ERR_TOOMANYACCESSES')
+            return
+
         mask = parse_mask(mask)
         timeout = parse_timeout(timeout)
         reason = decolon(reason)

@@ -43,6 +43,7 @@ replies = {
     'ERR_BADLEVEL': ('903', '%s :Bad level'),
     'ERR_AUTHENTICATIONFAILED': ('910', ':Authentication failed (%s)'),
     'ERR_NOACCESS': ('913', '%s :No access'),
+    'ERR_TOOMANYACCESSES': ('916', ':Too many access entries'),
     'ERR_ALREADYONCHANNEL': ('927', '%s :Already in the channel'),
 
     'ERR_ERRONEOUSUSERNAME': ('997', '%s :Erroneous username'),

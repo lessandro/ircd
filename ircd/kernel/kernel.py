@@ -281,6 +281,9 @@ class Kernel(object):
     def find_nick(self, nick):
         return self.redis.smembers('nick-users:' + nick)
 
+    def access_list_count(self, chan):
+        return self.redis.hlen('chan-access:' + chan['name'])
+
     def access_list_all(self, chan):
         acl_dict = self.redis.hgetall('chan-access:' + chan['name'])
         for key, value in acl_dict.iteritems():
