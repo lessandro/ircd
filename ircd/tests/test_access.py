@@ -147,3 +147,15 @@ def test_access_clear(k1):
 
     msg('ACCESS #a LIST GRANT')
     assert (code(), code()) == ('803', '805')
+
+
+def test_access_limit(k1):
+    msg('JOIN #a')
+
+    for i in range(10):
+        msg('ACCESS #a ADD GRANT a' + str(i))
+
+    popall()
+
+    msg('ACCESS #a ADD GRANT a11')
+    assert code() == '916'

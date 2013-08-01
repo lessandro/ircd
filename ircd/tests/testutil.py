@@ -12,7 +12,7 @@ class Config(object):
     ping_timeout = 10
     redis_db = 1
     hmac_key = 'key'
-
+    max_acl_entries = 10
 
 @pytest.fixture
 def k0():
