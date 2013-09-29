@@ -2,7 +2,7 @@ replies = {
     'RPL_WELCOME': ('001', 'Welcome to the Internet Relay Network'),
     'RPL_MYINFO': ('004', 'ircd 0.1 i ov'),
     'RPL_ISUPPORT': ('005', 'PREFIX=(qov).@+ CHANTYPES=# CHARSET=UTF-8 ' +
-                            ':are supported by this server'),
+                            'CHANMODES=,,,m :are supported by this server'),
 
     'RPL_UNAWAY': ('305', ':You are no longer marked as being away'),
     'RPL_NOWAWAY': ('306', ':You have been marked as being away'),
