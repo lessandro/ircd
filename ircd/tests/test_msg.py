@@ -66,6 +66,13 @@ def test_notice(k1):
     assert pop() == 'test:__2 :test1!test1@::1 NOTICE test2 :hello\r\n'
 
 
+def test_whisper(k1):
+    user(2)
+
+    msg('WHISPER #doesntmatter test2 hello')
+    assert pop() == 'test:__2 :test1!test1@::1 PRIVMSG test2 :hello\r\n'
+
+
 def test_moderated(k1):
     user(2)
 

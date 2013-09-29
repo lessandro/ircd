@@ -43,3 +43,8 @@ def cmd_privmsg(server, user, target, message):
 @command(auth=True, args=2)
 def cmd_notice(server, user, target, message):
     send_message('NOTICE', server, user, target, message)
+
+
+@command(auth=True, args=3)
+def cmd_whisper(server, user, chan, target, message):
+    send_message('PRIVMSG', server, user, target, message)
