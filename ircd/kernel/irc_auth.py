@@ -1,6 +1,6 @@
 import hmac
 import hashlib
-import msgpack
+import json
 import time
 import re
 from command import command, dispatch
@@ -78,7 +78,7 @@ def cmd_auth(server, user, hex_data, hex_digest):
                 user, 'ERR_AUTHENTICATIONFAILED', 'digest mismatch')
             return
 
-        data = msgpack.loads(hex_data.decode('hex'))
+        data = json.loads(hex_data.decode('hex'))
 
         if data['expires'] < time.time():
             server.send_reply(
@@ -122,6 +122,6 @@ def check_auth(server, user):
         'expires': time.time() + 60
     }
 
-    hex_data = msgpack.dumps(data).encode('hex')
+    hex_data = json.dumps(data).encode('hex')
     h = hmac.new(server.config.hmac_key, hex_data, hashlib.sha256)
     dispatch(server, user, 'AUTH %s %s' % (hex_data, h.hexdigest()))
