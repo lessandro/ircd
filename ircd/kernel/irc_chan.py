@@ -111,7 +111,7 @@ def cmd_who(server, user, chan):
         target = server.load_user(data['tag'])
 
         away = 'G' if target.get('away') else 'H'
-        mode_sym = map_mode(data['modes']) or '*'
+        mode_sym = map_mode(data['modes'])
 
         server.send_reply(
             user, 'RPL_WHOREPLY', chan['name'], target['username'],
