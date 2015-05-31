@@ -110,7 +110,7 @@ def cmd_who(server, user, chan):
     for nick, data in server.chan_nicks(chan):
         target = server.load_user(data['tag'])
 
-        away = 'G' if user.get('away') else 'H'
+        away = 'G' if target.get('away') else 'H'
         mode_sym = map_mode(data['modes']) or '*'
 
         server.send_reply(
